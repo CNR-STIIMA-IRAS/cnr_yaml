@@ -162,16 +162,12 @@ jobs:
         name: test_results_xml
         path: ${{runner.workspace}}/build/test-results/**/*.xml
 
-    # - uses: codecov/codecov-action@v3
-    #   with:
-    #     token: ${{ secrets.CODECOV_TOKEN }}
-    #     flags: unittests # optional
-    #     files: ${{runner.workspace}}/build/test-results/**/*.xml
-    #     name: codecov-umbrella # optional
-    #     fail_ci_if_error: false # optional (default = false)
-    #     verbose: false # optional (default = false)
-
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests # optional
+        files: ${{runner.workspace}}/build/test-results/**/*.xml
+        name: codecov-umbrella # optional
+        fail_ci_if_error: false # optional (default = false)
+        verbose: false # optional (default = false)
