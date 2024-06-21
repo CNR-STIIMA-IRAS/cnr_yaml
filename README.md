@@ -225,8 +225,8 @@ struct decoding_type_variant_holder<double>
 [y]:https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6
 [3]:https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_yaml?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_yaml&utm_campaign=Badge_Grade_Dashboard
 
-[f]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml.svg?type=shield
-[4]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml?ref=badge_shield
+[f]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml.svg?type=shield&issueType=license
+[4]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml?ref=badge_shield&issueType=license
 
 [o]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml.svg?type=large
 [5]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml?ref=badge_large
