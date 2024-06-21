@@ -1,5 +1,12 @@
 # cnr_yaml
 
+
+[![Build Status - Plain CMake][p]][0]
+[![codecov][c]][2] 
+[![Codacy Badge][y]][3]
+[![FOSSA Status][f]][4]
+
+
 A package that extends the [`yaml-cpp`](https://github.com/jbeder/yaml-cpp).
 The package provides a few functions to ease the manipulation of a `YAML::Node`.
 
@@ -201,3 +208,25 @@ struct decoding_type_variant_holder<double>
 }
 }
 ```
+
+### Contact ###
+
+<mailto:nicola.pedrocchi@stiima.cnr.it>
+
+## License ##
+[![FOSSA Status][o]][5]
+
+[p]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build_cmake.yml/badge.svg
+[0]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build_cmake.yml
+
+[c]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_yaml/branch/master/graph/badge.svg
+[2]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_yaml
+
+[y]:https://api.codacy.com/project/badge/Grade/7f1834c02aa84b959ee9b7529deb48d6
+[3]:https://app.codacy.com/gh/CNR-STIIMA-IRAS/cnr_yaml?utm_source=github.com&utm_medium=referral&utm_content=CNR-STIIMA-IRAS/cnr_yaml&utm_campaign=Badge_Grade_Dashboard
+
+[f]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml.svg?type=shield
+[4]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml?ref=badge_shield
+
+[o]:https://app.fossa.com/api/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml.svg?type=large
+[5]:https://app.fossa.com/projects/git%2Bgithub.com%2FCNR-STIIMA-IRAS%2Fcnr_yaml?ref=badge_large
