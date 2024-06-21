@@ -28,7 +28,7 @@ const YAML::Node merge_nodes(const YAML::Node& default_node, const YAML::Node& o
  * @param node
  * @return YAML::Node
  */
-YAML::Node init_tree(const std::vector<std::string> seq, const YAML::Node& node);
+YAML::Node init_tree(const std::vector<std::string>& seq, const YAML::Node& node);
 
 /**
  * @brief
