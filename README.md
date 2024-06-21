@@ -209,11 +209,12 @@ struct decoding_type_variant_holder<double>
 }
 ```
 
-### Contact ###
+### Contact
 
 <mailto:nicola.pedrocchi@stiima.cnr.it>
 
-## License ##
+## License
+
 [![FOSSA Status][o]][5]
 
 [p]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build_cmake.yml/badge.svg

@@ -268,9 +268,9 @@ struct as_if<std::vector<T, A>, std::optional<std::vector<T, A>>>
   std::optional<std::vector<T, A>> operator()() const
   {
     std::optional<std::vector<T, A>> val;
-    std::vector<T, A> decoded;
     if ((node.m_pNode != nullptr) && node.IsSequence())
     {
+      std::vector<T, A> decoded;
       for (std::size_t i = 0; i < node.size(); i++)
       {
         T element;
