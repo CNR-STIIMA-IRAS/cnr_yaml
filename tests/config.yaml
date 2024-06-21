@@ -1,0 +1,44 @@
+bool_value: True
+int_value: 5
+double_value: 3.14
+string_value: "Hello Universe"
+bool_array: [True, False, True]
+int_array: [10, 11, 12, 13]
+int_array_2: [10.1, 11.2, 12.3, 13.4]
+double_array: [7.5, 400.4] #
+double_array_2: [7, 400] #
+string_array: ['Nice', 'more', 'params']
+bytes_array: [0x01, 0xF1, 0xA2]
+nested_param:
+  another_int: 7
+  another_int2: 7.0
+  nested_param:
+    another_int: 7
+    another_int2: 7.0
+
+n1:
+  n2:
+    p1: 5
+    c1: "ciao"
+  n3:
+    v1:
+    - "s1"
+    - "s2"
+    - "s3"
+    v10: [1,2,3,4]
+  n4:
+    vv1:
+    - ["s11","s12","s13"]
+    - ["s21","s22","s23"]
+    - ["s31","s32","s33"]
+    vv2:
+    - [11, 12, 13]
+    - [21, 22, 23]
+    - [31, 32, 33]
+    vv3:
+    - [11.1, 12.2, 13.3]
+    - [21.1, 22.2, 23.3]
+    test_vector_complex_type:
+    - {name: ciao, value: 10.0}
+    - {name: hello, value: 20.0}
+    - {name: byebye, value: 30.0}
