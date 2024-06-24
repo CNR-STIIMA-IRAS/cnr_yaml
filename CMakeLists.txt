@@ -94,6 +94,10 @@ list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
 # ##############################################################################
 set(EXECUTABLE_TARGETS_LIST "")
 if(ENABLE_TESTING)
+  
+  include(cmake/coverage.cmake)
+  add_coverage_target("*/tests/*")
+
   find_package(GTest REQUIRED)
   include(GoogleTest)
   enable_testing()
