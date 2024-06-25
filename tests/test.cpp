@@ -220,6 +220,7 @@ bool call(const std::string& key, T& value, bool implicit_cast_if_possible = tru
   {
     std::cerr << "======================================== get_leaf error" << std::endl;
     std::cerr << "Input key: " << key << std::endl;
+    std::cerr << "Input Node Type: " << std::to_string(node) << std::endl;
     std::cerr << "Input Node: " << node << std::endl;
     std::cerr << "What: " << what << std::endl;
     std::cerr << "========================================" << std::endl;
