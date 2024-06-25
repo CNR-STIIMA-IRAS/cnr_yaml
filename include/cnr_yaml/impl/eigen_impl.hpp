@@ -263,32 +263,6 @@ inline const typename Derived::Scalar* data(const Eigen::MatrixBase<Derived>& m)
   return m.derived().data();
 }
 
-inline double norm(const double& m)
-{
-  return std::fabs(m);
-}
-
-template <typename Derived>
-inline double norm(const Eigen::MatrixBase<Derived>& m)
-{
-  return m.norm();
-}
-
-inline double normalized(const double& m)
-{
-  UNUSED(m);
-  return 1.0;
-}
-
-template <typename Derived>
-inline Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>
-normalized(const Eigen::MatrixBase<Derived>& m)
-{
-  Eigen::Matrix<typename Derived::Scalar, Derived::RowsAtCompileTime, Derived::ColsAtCompileTime> ret;
-  ret = m.normalized();
-  return ret;
-}
-
 template <typename T>
 inline int cols(const T& m)
 {
