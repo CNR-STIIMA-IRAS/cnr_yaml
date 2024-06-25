@@ -217,12 +217,15 @@ bool call(const std::string& key, T& value, bool implicit_cast_if_possible = tru
 {
   std::string what;
   YAML::Node leaf;
+  std::stringstream ss;
+  ss << "Input key: " << key << std::endl;
+  ss << "Input Node Type: " << std::to_string(node) << std::endl;
+  ss << "Input Node: " << std::to_string(node) << std::endl;
+
   if(!cnr::yaml::get_leaf(node, key, leaf, what, "/."))
   {
     std::cerr << "======================================== get_leaf error" << std::endl;
-    std::cerr << "Input key: " << key << std::endl;
-    std::cerr << "Input Node Type: " << std::to_string(node) << std::endl;
-    std::cerr << "Input Node: " << node << std::endl;
+    std::cerr << ss.str();
     std::cerr << "What: " << what << std::endl;
     std::cerr << "========================================" << std::endl;
     return false;
