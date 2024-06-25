@@ -313,6 +313,13 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
   EXPECT_TRUE (call("double_array", me_double));
   EXPECT_TRUE (me_double.rows() == 2 && me_double.cols() == 1 && me_double(0,0) == 7.5 && me_double(1,0) == 400.4);
 
+  Eigen::Matrix<double,2,1> me_double_21;
+  EXPECT_TRUE (call("double_array", me_double_21));
+  EXPECT_TRUE (me_double_21.rows() == 2 && me_double_21.cols() == 1 && me_double_21(0,0) == 7.5 && me_double_21(1,0) == 400.4);
+
+  Eigen::Matrix<double,2,2> me_double_22;
+  EXPECT_FALSE(call("double_array", me_double_22));
+
   double val = 0.0;
   EXPECT_TRUE (call("double_value", val));
   EXPECT_TRUE (val == 3.14);
