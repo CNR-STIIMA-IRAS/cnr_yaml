@@ -291,6 +291,14 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
   EXPECT_TRUE (call("double_array_2", v_double_2));
   EXPECT_TRUE (v_double_2.size() == 2 && v_double_2[0] == 7 && v_double_2[1] == 400);
 
+  std::array<double,2> a_double;
+  EXPECT_TRUE (call("double_array", a_double));
+  EXPECT_TRUE (a_double[0] == 7.5 && a_double[1] == 400.4);
+
+
+  std::array<double,3> a_double_2;
+  EXPECT_FALSE (call("double_array", a_double_2));
+
   Eigen::VectorXd ve_double;
   EXPECT_TRUE (call("double_array", ve_double));
   EXPECT_TRUE (ve_double.rows() == 2 && ve_double(0) == 7.5 && ve_double(1) == 400.4);
@@ -310,7 +318,6 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
   std::array<int,4> a_int;
   EXPECT_TRUE (call("int_array", a_int));
   EXPECT_TRUE (a_int[0] == 10 && a_int[1] == 11 && a_int[2] == 12 && a_int[3] == 13);
-
 
   EXPECT_FALSE(call("int_array_2", v_int, false));
   EXPECT_TRUE (call("int_array_2", v_int, true));
@@ -375,6 +382,33 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
   EXPECT_TRUE (vv_int.size() == 3 && vv_int.front().size() == 3 && vv_int[0][0] == 11 && vv_int[0][1] == 12 && vv_int[0][2] == 13);
   EXPECT_TRUE (vv_int.size() == 3 && vv_int.front().size() == 3 && vv_int[1][0] == 21 && vv_int[1][1] == 22 && vv_int[1][2] == 23);
   EXPECT_TRUE (vv_int.size() == 3 && vv_int.front().size() == 3 && vv_int[2][0] == 31 && vv_int[2][1] == 32 && vv_int[2][2] == 33);
+
+  std::array<std::array<int,3>,3> aa_int;
+  EXPECT_TRUE (call("n1/n4/vv2", aa_int));
+  EXPECT_TRUE (aa_int.size() == 3 && aa_int.front().size() == 3 && aa_int[0][0] == 11 && aa_int[0][1] == 12 && aa_int[0][2] == 13);
+  EXPECT_TRUE (aa_int.size() == 3 && aa_int.front().size() == 3 && aa_int[1][0] == 21 && aa_int[1][1] == 22 && aa_int[1][2] == 23);
+  EXPECT_TRUE (aa_int.size() == 3 && aa_int.front().size() == 3 && aa_int[2][0] == 31 && aa_int[2][1] == 32 && aa_int[2][2] == 33);
+
+  std::array<std::array<int,2>,3> aa_int_2;
+  EXPECT_FALSE (call("n1/n4/vv2", aa_int_2));
+  
+  std::array<std::vector<int>,3> av_int;
+  EXPECT_TRUE (call("n1/n4/vv2", av_int));
+  EXPECT_TRUE (av_int.size() == 3 && av_int.front().size() == 3 && av_int[0][0] == 11 && av_int[0][1] == 12 && av_int[0][2] == 13);
+  EXPECT_TRUE (av_int.size() == 3 && av_int.front().size() == 3 && av_int[1][0] == 21 && av_int[1][1] == 22 && av_int[1][2] == 23);
+  EXPECT_TRUE (av_int.size() == 3 && av_int.front().size() == 3 && av_int[2][0] == 31 && av_int[2][1] == 32 && av_int[2][2] == 33);
+
+  std::array<std::vector<int>,2> av_int_2;
+  EXPECT_FALSE (call("n1/n4/vv2", av_int_2));
+
+  std::vector<std::array<int,3>> va_int;
+  EXPECT_TRUE (call("n1/n4/vv2", va_int));
+  EXPECT_TRUE (va_int.size() == 3 && va_int.front().size() == 3 && va_int[0][0] == 11 && va_int[0][1] == 12 && va_int[0][2] == 13);
+  EXPECT_TRUE (va_int.size() == 3 && va_int.front().size() == 3 && va_int[1][0] == 21 && va_int[1][1] == 22 && va_int[1][2] == 23);
+  EXPECT_TRUE (va_int.size() == 3 && va_int.front().size() == 3 && va_int[2][0] == 31 && va_int[2][1] == 32 && va_int[2][2] == 33);
+
+  std::vector<std::array<int,2>> va_int_2;
+  EXPECT_FALSE(call("n1/n4/vv2", va_int_2));
 
   std::vector<std::vector<double>> vv_double;
   EXPECT_TRUE (call("n1/n4/vv2", vv_double, true));

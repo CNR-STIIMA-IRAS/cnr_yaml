@@ -156,24 +156,24 @@ inline bool _get_sequence(const YAML::Node& node, std::vector<std::vector<T, A>>
 }
 
 template <typename T, std::size_t N>
-bool _get_sequence(const YAML::Node& node, std::array<T, N>& ret, std::string& what, const bool& implicit_cast_if_possible)
+inline bool _get_sequence(const YAML::Node& node, std::array<T, N>& ret, std::string& what, const bool& implicit_cast_if_possible)
 {
   bool ok = false;
   try
   {
     std::vector<T> tmp;
     ok = _get_sequence(node, tmp, what, implicit_cast_if_possible);
-    if (!ok || (tmp.size() == N))
+    if(tmp.size() != N)
     {
       std::stringstream _node;
       _node << node;
       what = "Tried to extract a '" + boost::typeindex::type_id_with_cvr<decltype(T())>().pretty_name() +
-             "' ?error in size? \n Input Node:\n" + _node.str();
+             "'  but there is a size mismathc between the expected and the got one.\n Input Node:\n" + _node.str();
+      ok = false;
     }
-    else
+    else if(ok)
     {
       std::copy_n(tmp.begin(), N, ret.begin());
-      ok = true;
     }
   }
   CATCH(ret);
@@ -182,27 +182,27 @@ bool _get_sequence(const YAML::Node& node, std::array<T, N>& ret, std::string& w
 }
 
 template <typename T, std::size_t N, std::size_t M>
-bool _get_sequence(const YAML::Node& node, std::array<std::array<T, M>, N>& ret, std::string& what, const bool& implicit_cast_if_possible)
+inline bool _get_sequence(const YAML::Node& node, std::array<std::array<T, M>, N>& ret, std::string& what, const bool& implicit_cast_if_possible)
 {
   bool ok = false;
   try
   {
     std::vector<std::vector<T>> tmp;
     ok = _get_sequence(node, tmp, what, implicit_cast_if_possible);
-    if (!ok || (tmp.size() != N) || (tmp.front().size() != M))
+    if ((tmp.size() != N) || (tmp.front().size() != M))
     {
       std::stringstream _node;
       _node << node;
       what = "Tried to extract a '" + boost::typeindex::type_id_with_cvr<decltype(T())>().pretty_name() +
              "' ?error in size? \n Input Node:\n" + _node.str();
+      ok = false;
     }
-    else
+    else if(ok)
     {
       for (std::size_t i = 0; i < N; i++)
       {
         std::copy_n(tmp.at(i).begin(), M, ret.at(i).begin());
       }
-      ok = true;
     }
   }
   CATCH(ret);
