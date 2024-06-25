@@ -272,12 +272,15 @@ TEST(YamlUtilities, BasicTests)
  bool ok = cnr::yaml::get(only_root, value, what, implicit_cast_if_possible);
  EXPECT_FALSE(ok);
  ok = cnr::yaml::get(only_root["root"], value, what, implicit_cast_if_possible);
+ std::cout << "========================================" << std::endl;
+ std::cout << "Input Node Type: " << std::to_string(node) << std::endl;
+ std::cout << "Input Node: " << node << std::endl;
  if(!ok)
-  {
-    std::cerr << "======================================== get error" << std::endl;
-    std::cerr << "What: " << what << std::endl;
-    std::cerr << "========================================" << std::endl;
-  }
+{
+  std::cerr << "What: " << what << std::endl;
+}
+std::cout << "========================================" << std::endl;
+
 }
 
 TEST(YamlUtilities, ClientUsageBasicTypes)
