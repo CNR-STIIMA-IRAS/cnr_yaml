@@ -28,7 +28,10 @@ jobs:
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
       run: sudo apt-get update && sudo apt-get install -y --fix-missing libeigen3-dev libyaml-cpp-dev  libboost-iostreams-dev libboost-date-time-dev libboost-program-options-dev libgtest-dev cmake tree lcov gcovr  libboost-filesystem-dev
-      # python3-coverage
+    
+    - name: Install gcovr
+      run: |
+        pip install -r requirements.txt  --require-hashes
 
     - name: Download Ninja and CMake
       id: cmake_and_ninja
@@ -107,7 +110,7 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-            -D USE_ROS1=OFF
+            -D ENABLE_COVERAGE=ON
             -D ENABLE_TESTING=ON
             -D COMPILE_EXAMPLE=OFF
           RESULT_VARIABLE result
@@ -154,7 +157,14 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Running tests failed!")
         endif()
-
+    - name: generate coverage
+      working-directory: ./build
+      run: |
+          make cov
+    - name: Generate JSON coverage report
+      working-directory: ./build
+      run: |
+          gcovr -r .. . --branches --cobertura > coverage.xml
     - name: Upload test results
       uses: actions/upload-artifact@v2
       if: failure()
