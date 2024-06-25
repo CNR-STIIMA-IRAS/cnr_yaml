@@ -49,6 +49,17 @@ inline std::string to_string(const std::vector<T, A>& v)
   return ret += "]";
 }
 
+template<typename T, std::size_t Nm>
+inline std::string to_string(const std::array<T, Nm>& v)
+{
+  std::string ret = "[ ";
+  for (auto const& vi : v)
+  {
+    ret +=  to_string(vi) + " ";
+  }
+  return ret += "]";
+}
+
 template <typename D>
 inline std::string to_string(const Eigen::MatrixBase<D>& m)
 {

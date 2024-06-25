@@ -162,7 +162,7 @@ bool _get_sequence(const YAML::Node& node, std::array<T, N>& ret, std::string& w
   try
   {
     std::vector<T> tmp;
-    ok = get_sequence(node, tmp, what, implicit_cast_if_possible);
+    ok = _get_sequence(node, tmp, what, implicit_cast_if_possible);
     if (!ok || (tmp.size() == N))
     {
       std::stringstream _node;

@@ -16,6 +16,9 @@ std::string to_string(const YAML::Node& v);
 template<typename T, typename A>
 std::string to_string(const std::vector<T, A>& v);
 
+template<typename T, std::size_t Nm>
+std::string to_string(const std::array<T, Nm>& v);
+
 template <typename D>
 std::string to_string(const Eigen::MatrixBase<D>& m);
 

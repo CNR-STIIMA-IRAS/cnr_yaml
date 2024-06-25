@@ -1,3 +1,4 @@
+#include <array>
 #include <vector>
 #include <filesystem>
 #include <yaml-cpp/node/node.h>
@@ -305,6 +306,11 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
   std::vector<int> v_int;
   EXPECT_TRUE (call("int_array", v_int));
   EXPECT_TRUE (v_int.size() == 4 && v_int[0] == 10 && v_int[1] == 11 && v_int[2] == 12 && v_int[3] == 13);
+
+  std::array<int,4> a_int;
+  EXPECT_TRUE (call("int_array", a_int));
+  EXPECT_TRUE (a_int[0] == 10 && a_int[1] == 11 && a_int[2] == 12 && a_int[3] == 13);
+
 
   EXPECT_FALSE(call("int_array_2", v_int, false));
   EXPECT_TRUE (call("int_array_2", v_int, true));
