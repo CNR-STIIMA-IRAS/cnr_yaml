@@ -289,69 +289,6 @@ normalized(const Eigen::MatrixBase<Derived>& m)
   return ret;
 }
 
-// template <typename T>
-// inline int size(const T& m)
-// {
-//   UNUSED(m);
-//   return 1;
-// }
-
-// template <typename Derived>
-// inline int size(const Eigen::MatrixBase<Derived>& m)
-// {
-//   return m.size();
-// }
-
-// template <typename Derived>
-// inline int size(const std::vector<Derived>& m)
-// {
-//   return m.size();
-// }
-
-// template <typename Derived>
-// inline int size(const std::vector<std::vector<Derived>>& m)
-// {
-//   return m.size() * m.front().size();
-// }
-
-// template <typename T>
-// inline int rows(const T& m)
-// {
-//   UNUSED(m);
-//   return 1;
-// }
-
-// template <typename T>
-// inline int rows(const std::vector<T>& m)
-// {
-//   return static_cast<int>(m.size());
-// }
-
-// template <typename T>
-// inline int rows(const std::vector<std::vector<T>>& m)
-// {
-//   return static_cast<int>(m.size());
-// }
-
-// template <typename Derived>
-// inline int rows(const Eigen::MatrixBase<Derived>& m)
-// {
-//   return m.rows();
-// }
-
-inline int rank(const double& m)
-{
-  UNUSED(m);
-  return 1;
-}
-
-template <typename Derived>
-inline int rank(const Eigen::MatrixBase<Derived>& m)
-{
-  Eigen::FullPivLU<Derived> lu_decomp(m);
-  return lu_decomp.rank();
-}
-
 template <typename T>
 inline int cols(const T& m)
 {
