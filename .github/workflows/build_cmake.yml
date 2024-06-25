@@ -31,7 +31,7 @@ jobs:
     
     - name: Install gcovr
       run: |
-        pip install -r requirements.txt  --require-hashes
+        python -m pip install gcovr
 
     - name: Download Ninja and CMake
       id: cmake_and_ninja
