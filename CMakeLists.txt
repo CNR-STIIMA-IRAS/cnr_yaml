@@ -23,6 +23,8 @@ cnr_set_flags()
 # DEPENDENCIES            ##
 # ##############################################################################
 find_package(Eigen3 REQUIRED COMPONENTS Core Dense  Geometry)
+list(APPEND DEPENDENCIES_LIBRARIES  Eigen3::Eigen)
+list(APPEND DEPENDENCIES_INCLUDE_DIRS "${EIGEN3_INCLUDE_DIRS}")
 
 find_package(yaml-cpp REQUIRED)
 if(yaml-cpp VERSION_LESS "0.8")
@@ -32,24 +34,22 @@ if(yaml-cpp VERSION_LESS "0.8")
 else()
   set(YAML_CPP_HAS_NAMESPACE 1)
 endif()
+if(BOOL:${YAML_CPP_HAS_NAMESPACE})
+  list(APPEND DEPENDENCIES_LIBRARIES yaml-cpp::yaml-cpp)
+else()
+  list(APPEND DEPENDENCIES_LIBRARIES yaml-cpp)
+endif()
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options iostreams regex)
-
-list(APPEND DEPENDENCIES_INCLUDE_DIRS "${Boost_INCLUDE_DIRS}" "${EIGEN3_INCLUDE_DIRS}")
+list(APPEND DEPENDENCIES_LIBRARIES  Boost::system  Boost::filesystem)
+list(APPEND DEPENDENCIES_INCLUDE_DIRS "${Boost_INCLUDE_DIRS}")
 
 if(NOT BOOL:${YAML_CPP_HAS_NAMESPACE})
   list(APPEND DEPENDENCIES_INCLUDE_DIRS  ${yaml-cpp_INCLUDE_DIRS})
 endif()
-
-if(BOOL:${YAML_CPP_HAS_NAMESPACE})
-  list(APPEND DEPENDENCIES_ROS_LIBRARIES yaml-cpp::yaml-cpp)
-else()
-  list(APPEND DEPENDENCIES_ROS_LIBRARIES yaml-cpp)
-endif()
-
 
 cnr_install_directories(CNR_INSTALL_INCLUDE_DIR CNR_INSTALL_LIB_DIR
                         CNR_INSTALL_BIN_DIR CNR_INSTALL_SHARE_DIR)
@@ -75,11 +75,7 @@ target_include_directories(
 
 target_link_libraries(
   cnr_yaml
-  PUBLIC $<${YAML_CPP_HAS_NAMESPACE}:yaml-cpp::yaml-cpp>
-  PUBLIC $<$<NOT:${YAML_CPP_HAS_NAMESPACE}>:PkgConfig::yaml-cpp_pkg_config>
-  PUBLIC Boost::system
-  PUBLIC Boost::filesystem
-  PUBLIC Eigen3::Eigen)
+  PUBLIC "${DEPENDENCIES_LIBRARIES}")
 
 add_library(cnr_yaml::cnr_yaml ALIAS cnr_yaml)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
@@ -94,7 +90,7 @@ list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
 # ##############################################################################
 set(EXECUTABLE_TARGETS_LIST "")
 if(ENABLE_TESTING)
-  
+
   include(cmake/coverage.cmake)
   add_coverage_target("*/tests/*")
 
@@ -111,6 +107,8 @@ if(ENABLE_TESTING)
 
   target_compile_definitions(test_yaml
                       PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}")
+
+  
 
   list(APPEND EXECUTABLE_TARGETS_LIST test_yaml)
 endif()
@@ -142,4 +140,3 @@ endif()
 # ##############################################################################
 # END INSTALL     ##
 # ##############################################################################
-
