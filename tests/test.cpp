@@ -164,8 +164,7 @@ TEST(EigeTest, EigenTest)
   EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,10));
   EXPECT_FALSE(cnr::yaml::resize(v_lhs_1,10,10));
 
-  EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,v_lhs_2));
-  
+  EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,v_lhs_2)); 
 }
 
 // ====================================================================================================================
@@ -427,6 +426,8 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
               me_double(0, 2) == 13.3);
   EXPECT_TRUE(me_double.rows() == 2 && me_double.cols() == 3 && me_double(1, 0) == 21.1 && me_double(1, 1) == 22.2 &&
               me_double(1, 2) == 23.3);
+
+  EXPECT_FALSE(call("n1/n4/vv3", me_double_21));
 }
 
 using namespace std::chrono_literals;
