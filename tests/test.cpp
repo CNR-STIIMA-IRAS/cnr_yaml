@@ -155,33 +155,17 @@ TEST(EigeTest, EigenTest)
   EXPECT_FALSE(cnr::yaml::copy(ve_lhs_1, v_rhs_2));
   EXPECT_FALSE(cnr::yaml::copy(ve_lhs_2, v_rhs_1));
 
-  // //! resize
-  // template <typename D, typename
-  // std::enable_if<(Eigen::MatrixBase<D>::RowsAtCompileTime == Eigen::Dynamic)
-  // ||
-  //                                                   (Eigen::MatrixBase<D>::ColsAtCompileTime
-  //                                                   == Eigen::Dynamic),
-  //                                               int>::type = 0>
-  // bool resize(Eigen::MatrixBase<D> const& m, int rows, int cols = 1);
+  EXPECT_TRUE(cnr::yaml::resize(ve_lhs_x,10));
+  EXPECT_FALSE(cnr::yaml::resize(ve_lhs_3,10));
 
-  // template <typename D, typename
-  // std::enable_if<(Eigen::MatrixBase<D>::RowsAtCompileTime != Eigen::Dynamic)
-  // &&
-  //                                                   (Eigen::MatrixBase<D>::ColsAtCompileTime
-  //                                                   != Eigen::Dynamic),
-  //                                               int>::type = 0>
-  // bool resize(Eigen::MatrixBase<D> const& m, int rows, int cols = 1);
+  EXPECT_TRUE(cnr::yaml::resize(d_lhs,1));
+  EXPECT_FALSE(cnr::yaml::resize(d_lhs,2));
 
-  // bool resize(const double& m, int rows, int cols = 1);
+  EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,10));
+  EXPECT_FALSE(cnr::yaml::resize(v_lhs_1,10,10));
 
-  // template <typename T>
-  // bool resize(std::vector<T>& m, int rows, int cols = 1);
-
-  // template <typename T>
-  // bool resize(std::vector<T>& m1, const std::vector<T>& m2);
-
-  // template <typename T>
-  // bool resize(T& /*m1*/, const T& /*m2*/);
+  EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,v_lhs_2));
+  
 }
 
 // ====================================================================================================================
