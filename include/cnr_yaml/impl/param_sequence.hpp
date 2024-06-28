@@ -254,7 +254,6 @@ inline bool _get_sequence_eigen(const YAML::Node& node, Eigen::MatrixBase<Derive
       if (!ok)
       {
         what = "Failed in extracting a vector from the Node " + _node.str();
-        ;
         return false;
       }
 
@@ -270,6 +269,7 @@ inline bool _get_sequence_eigen(const YAML::Node& node, Eigen::MatrixBase<Derive
         for (int j = 0; j < cols; j++)
           _ret(i, j) = vv.at(static_cast<int>(i)).at(static_cast<int>(j));
     }
+    ok = true;
   }
   catch (std::exception& e)
   {
@@ -281,7 +281,7 @@ inline bool _get_sequence_eigen(const YAML::Node& node, Eigen::MatrixBase<Derive
     what = "Got an unhandled exception! Input node:\n" + _node.str();
     ok = false;
   }
-  return true;
+  return ok;
 }
 
 template <typename T>

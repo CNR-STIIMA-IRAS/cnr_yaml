@@ -85,7 +85,6 @@ inline bool decode(const YAML::Node& node, T& ret, std::string& what, const bool
 {
   using variant = typename decoding_type_variant_holder<T>::variant;
   using type = std::variant_alternative<I, variant>::type;
-  type _ret;
   try
   {
     if (!implicit_cast_if_possible)
@@ -101,13 +100,17 @@ inline bool decode(const YAML::Node& node, T& ret, std::string& what, const bool
     }
     else
     {
+      type _ret;
       if (!YAML::convert<type>::decode(node, _ret))
       {
         return decode<T, I + 1, N>(node, ret, what, implicit_cast_if_possible);
       }
+      else
+      {
+        cast(std::move(ret), std::move(_ret));
+        return true;
+      }
     }
-    cast(std::move(ret), std::move(_ret));
-    return true;
   }
   catch (const std::exception& e)
   {

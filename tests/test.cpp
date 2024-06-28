@@ -360,23 +360,20 @@ TEST(YamlUtilities, ClientUsageBasicTypes)
 
   std::array<std::array<int, 3>, 3> aa_int;
   EXPECT_TRUE(call("n1/n4/vv2", aa_int));
-  EXPECT_TRUE(aa_int.size() == 3 && aa_int.front().size() == 3 && aa_int[0][0] == 11 && aa_int[0][1] == 12 &&
-              aa_int[0][2] == 13);
-  EXPECT_TRUE(aa_int.size() == 3 && aa_int.front().size() == 3 && aa_int[1][0] == 21 && aa_int[1][1] == 22 &&
-              aa_int[1][2] == 23);
-  EXPECT_TRUE(aa_int.size() == 3 && aa_int.front().size() == 3 && aa_int[2][0] == 31 && aa_int[2][1] == 32 &&
-              aa_int[2][2] == 33);
+  EXPECT_TRUE(aa_int[0][0] == 11 && aa_int[0][1] == 12 && aa_int[0][2] == 13);
+  EXPECT_TRUE(aa_int[1][0] == 21 && aa_int[1][1] == 22 && aa_int[1][2] == 23);
+  EXPECT_TRUE(aa_int[2][0] == 31 && aa_int[2][1] == 32 && aa_int[2][2] == 33);
 
   std::array<std::array<int, 2>, 3> aa_int_2;
   EXPECT_FALSE(call("n1/n4/vv2", aa_int_2));
 
   std::array<std::vector<int>, 3> av_int;
   EXPECT_TRUE(call("n1/n4/vv2", av_int));
-  EXPECT_TRUE(av_int.size() == 3 && av_int.front().size() == 3 && av_int[0][0] == 11 && av_int[0][1] == 12 &&
+  EXPECT_TRUE(av_int.front().size() == 3 && av_int[0][0] == 11 && av_int[0][1] == 12 &&
               av_int[0][2] == 13);
-  EXPECT_TRUE(av_int.size() == 3 && av_int.front().size() == 3 && av_int[1][0] == 21 && av_int[1][1] == 22 &&
+  EXPECT_TRUE(av_int.front().size() == 3 && av_int[1][0] == 21 && av_int[1][1] == 22 &&
               av_int[1][2] == 23);
-  EXPECT_TRUE(av_int.size() == 3 && av_int.front().size() == 3 && av_int[2][0] == 31 && av_int[2][1] == 32 &&
+  EXPECT_TRUE(av_int.front().size() == 3 && av_int[2][0] == 31 && av_int[2][1] == 32 &&
               av_int[2][2] == 33);
 
   std::array<std::vector<int>, 2> av_int_2;

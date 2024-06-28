@@ -1,11 +1,9 @@
 # cnr_yaml
 
-
 [![Build Status - Plain CMake][p]][0]
 [![codecov][c]][2] 
 [![Codacy Badge][y]][3]
 [![FOSSA Status][f]][4]
-
 
 A package that extends the [`yaml-cpp`](https://github.com/jbeder/yaml-cpp).
 The package provides a few functions to ease the manipulation of a `YAML::Node`.
@@ -94,6 +92,7 @@ else
   In `yaml-cpp` everything can be a `std::string`. The `as_string` in the example will be always true! Therefore, pay attention to the verification order in the case!
 
 ### Node Management Utilities
+
 A few functions to ease managing nodes are in the header [`nodes_utils.h`](include/cnr_yaml/node_utils.h)
 
 * Merging nodes and override values if the key tree is the same.
