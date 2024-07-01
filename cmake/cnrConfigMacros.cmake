@@ -29,12 +29,6 @@ macro(get_project_name filename extracted_name extracted_version)
     cmake_policy(SET CMP0048 NEW)
   endif()
 
-  if("$ENV{ROS_VERSION}" STREQUAL "1")
-    set(USER_BUILD_TOOL "CATKIN")
-  else()
-    set(USER_BUILD_TOOL "CMAKE")
-  endif()
-
 endmacro()
 
 #
@@ -80,6 +74,17 @@ macro(cnr_set_flags)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
   endif()
 
+  # use, i.e. don't skip the full RPATH for the build tree
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+
+  # when building, don't use the install RPATH already
+  # (but later on when installing)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+ 
+  # add the automatically determined parts of the RPATH
+  # which point to directories outside the build tree to the install RPATH
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endmacro()
 
 #
@@ -110,78 +115,87 @@ macro(cnr_target_compile_options TARGET_NAME)
 endmacro()
 
 #
-# cnr_install_directories
+# cnr_configure_gtest
 #
-macro(cnr_install_directories CNR_INSTALL_INCLUDE_DIR
-      CNR_INSTALL_LIB_DIR CNR_INSTALL_BIN_DIR CNR_INSTALL_SHARE_DIR)
-  
-  if(${USER_BUILD_TOOL} STREQUAL "CATKIN")
-    set(${CNR_INSTALL_INCLUDE_DIR}
-        ${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME})
-    set(${CNR_INSTALL_LIB_DIR} ${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME})
-    set(${CNR_INSTALL_BIN_DIR} ${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME})
-    set(${CNR_INSTALL_SHARE_DIR} ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME})
+macro(cnr_configure_gtest trg deps)
+
+  find_package(GTest REQUIRED)
+
+  if(${GTest_FOUND})
+    include(GoogleTest)
+    enable_testing()
+    include(CTest REQUIRED)
+
+    gtest_discover_tests(${trg})
+
+    if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
+      target_link_libraries(
+        ${trg}
+        PUBLIC
+        ${deps}
+        Threads::Threads
+        GTest::Main
+        Boost::program_options
+        Boost::system
+        Boost::filesystem
+        Boost::iostreams
+        Boost::regex)
+    else()
+      target_link_libraries(${trg}
+        ${dep} GTest::Main)
+      if(THREADS_HAVE_PTHREAD_ARG)
+        target_compile_options(${trg} PUBLIC "-pthread")
+      endif()
+      if(CMAKE_THREAD_LIBS_INIT)
+        target_link_libraries(${trg}
+                              "${CMAKE_THREAD_LIBS_INIT}")
+      endif()
+    endif()
   else()
-    set(${CNR_INSTALL_INCLUDE_DIR} "${CMAKE_INSTALL_PREFIX}/include")
-    set(${CNR_INSTALL_LIB_DIR} "${CMAKE_INSTALL_PREFIX}/lib")
-    set(${CNR_INSTALL_BIN_DIR} "${CMAKE_INSTALL_PREFIX}/bin")
-    set(${CNR_INSTALL_SHARE_DIR} "${CMAKE_INSTALL_PREFIX}/share")
+
+    message(WARNING "unable to add gtest: missing pacakge GTest")
+
   endif()
 endmacro()
 
 #
-# ROS1/CATKIN install
+# cnr_install
 #
-macro(cnr_install_catkin_policy TARGETS_LIST)
-  install(
-    TARGETS ${PROJECT_NAME}
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+macro(
+  cnr_install
+  PROJECT_VERSION
+  LIBRARY_TARGETS_LIST
+  EXECUTABLE_TARGETS_LIST
+  HEADERS_DIRS)
 
-  install(
-    DIRECTORY include/${PROJECT_NAME}/
-    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-    FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-    PATTERN ".svn" EXCLUDE)
-
-  install(
-    DIRECTORY launch/
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-    PATTERN ".svn" EXCLUDE)
-endmacro()
-
-#
-# ROS2/CMAKE install
-#
-macro(cnr_install_cmake_policy_gt_3_0_0 INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
-      BIN_INSTALL_DIR PROJECT_VERSION LIBRARY_TARGETS_LIST EXECUTABLE_TARGETS_LIST)
-
-  set(CONFIG_INSTALL_DIR "share/${PROJECT_NAME}/cmake")
-  set(CONFIG_INSTALL_DIR_2 "share/${PROJECT_NAME}/cmake_alternative")
-  set(CONFIG_NAMESPACE "${PROJECT_NAME}::")
-  set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
-  set(VERSION_CONFIG "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
-  set(PROJECT_CONFIG_OUTPUT "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
-  set(PROJECT_CONFIG_INPUT_TEMPLATE "cmake/cnrConfigTemplate.cmake.in")
-
-  message(STATUS "CONFIG_INSTALL_DIR: ${CONFIG_INSTALL_DIR}")
-  message(STATUS "CONFIG_NAMESPACE: ${CONFIG_NAMESPACE}")
-  message(STATUS "TARGETS_EXPORT_NAME: ${TARGETS_EXPORT_NAME}")
-  message(STATUS "VERSION_CONFIG: ${VERSION_CONFIG}")
-  message(STATUS "PROJECT_CONFIG_OUTPUT: ${PROJECT_CONFIG_OUTPUT}")
-  message(STATUS "PROJECT_CONFIG_INPUT_TEMPLATE: ${PROJECT_CONFIG_INPUT_TEMPLATE}")
+  list(APPEND TARGETS_LIST ${LIBRARY_TARGETS_LIST} ${EXECUTABLE_TARGETS_LIST})
+  
+  ###################################################################
+  set(CONFIG_NAMESPACE                "${PROJECT_NAME}::")
+  set(TARGETS_EXPORT_NAME             "${PROJECT_NAME}Targets")
+  set(VERSION_CONFIG                  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+  set(PROJECT_CONFIG_OUTPUT           "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+  set(PROJECT_CONFIG_INPUT_TEMPLATE   "cmake/cnrConfigTemplate.cmake.in")
 
   # Parameter template in the PROJECT_CONFIG_INPUT_TEMPLATE
-  set(PACKAGE_INCLUDE_INSTALL_DIR "${INCLUDE_INSTALL_DIR}")
-  set(EXPORTED_LIBRARY_TARGETS_LIST "${LIBRARY_TARGETS_LIST}")
-  set(EXPORTED_EXECUTABLE_TARGETS_LIST "${EXECUTABLE_TARGETS_LIST}")
-  set(ROS1_MODULE_COMPILED "${ROS1_MODULE}")
-  set(ROS2_MODULE_COMPILED "${ROS2_MODULE}")
-  set(MAPPED_FILE_MODULE_COMPILED "${MAPPED_FILE_MODULE}")
-
+  set(PACKAGE_INCLUDE_INSTALL_DIR       "${CMAKE_INSTALL_PREFIX}/include")
+  set(EXPORTED_LIBRARY_TARGETS_LIST     "${LIBRARY_TARGETS_LIST}")
+  set(EXPORTED_EXECUTABLE_TARGETS_LIST  "${EXECUTABLE_TARGETS_LIST}")
+  set(EXPORTED_LIBRARY_TARGET_RPATH     "${PACKAGE_LIB_DESTINATION}")
+  
+  ##
+  message(STATUS "CONFIG_INSTALL_DIR=${CONFIG_INSTALL_DIR}")
+  message(STATUS "CONFIG_NAMESPACE=${CONFIG_NAMESPACE}")
+  message(STATUS "TARGETS_EXPORT_NAME=${TARGETS_EXPORT_NAME}")
+  message(STATUS "VERSION_CONFIG=${VERSION_CONFIG}")
+  message(STATUS "PROJECT_CONFIG_OUTPUT=${PROJECT_CONFIG_OUTPUT}")
+  message(STATUS "PROJECT_CONFIG_INPUT_TEMPLATE=${PROJECT_CONFIG_INPUT_TEMPLATE}")
+  message(STATUS "PACKAGE_INCLUDE_INSTALL_DIR=${PACKAGE_INCLUDE_INSTALL_DIR}")
+  message(STATUS "LIBRARY_TARGETS_LIST=${LIBRARY_TARGETS_LIST}")
+  message(STATUS "EXPORTED_EXECUTABLE_TARGETS_LIST=${EXECUTABLE_TARGETS_LIST}")
+  message(STATUS "LIBRARY_TARGETS_LIST=${LIBRARY_TARGETS_LIST}")
+  message(STATUS "TARGETS_LIST=${TARGETS_LIST}")
+  
   include(CMakePackageConfigHelpers)
 
   # Create the ${PROJECT_NAME}ConfigVersion.cmake
@@ -199,99 +213,31 @@ macro(cnr_install_cmake_policy_gt_3_0_0 INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
   # Install cmake config files
   install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}"
           DESTINATION "${CONFIG_INSTALL_DIR}")
-
-  install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}"
-          DESTINATION "${CONFIG_INSTALL_DIR_2}")
-
-  # Install cmake targets files
- message(STATUS "TARGETS FILE:" ${PROJECT_NAME}Targets.cmake)
-  install(
-    EXPORT "${TARGETS_EXPORT_NAME}"
-    NAMESPACE "${CONFIG_NAMESPACE}"
-    DESTINATION "${CONFIG_INSTALL_DIR}"
-    FILE ${PROJECT_NAME}Targets.cmake
-  )
-
-  list(APPEND TARGETS_LIST ${EXPORTED_LIBRARY_TARGETS_LIST} ${EXPORTED_EXECUTABLE_TARGETS_LIST})
+          
   install(
     TARGETS ${TARGETS_LIST}
     EXPORT ${TARGETS_EXPORT_NAME}
-    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-    RUNTIME DESTINATION ${BIN_INSTALL_DIR})
-
-endmacro()
-
-macro(
-  cnr_install_cmake_policy
-  INCLUDE_INSTALL_DIR
-  LIB_INSTALL_DIR
-  BIN_INSTALL_DIR
-  PROJECT_VERSION
-  LIBRARY_TARGETS_LIST
-  EXECUTABLE_TARGETS_LIST
-  HEADERS_DIRS)
-
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" GREATER 3.0)
-    cnr_install_cmake_policy_gt_3_0_0(
-      ${INCLUDE_INSTALL_DIR} ${LIB_INSTALL_DIR} ${BIN_INSTALL_DIR}
-      ${PROJECT_VERSION} "${LIBRARY_TARGETS_LIST}" "${EXECUTABLE_TARGETS_LIST}")
-  else()
-    list(APPEND TARGETS_LIST ${EXPORTED_LIBRARY_TARGETS_LIST} ${EXPORTED_EXECUTABLE_TARGETS_LIST})
-    message(STATUS "TARGETS_LIST: ${TARGETS_LIST}")
-    install(
-      TARGETS ${TARGETS_LIST}
-      ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-      LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-      RUNTIME DESTINATION ${BIN_INSTALL_DIR})
-
-  endif()
+    ARCHIVE DESTINATION "${PACKAGE_LIB_DESTINATION}"
+    LIBRARY DESTINATION "${PACKAGE_LIB_DESTINATION}"
+    RUNTIME DESTINATION "${PACKAGE_BIN_DESTINATION}")
 
   foreach(HEADERS_DIR ${HEADERS_DIRS})
     install(
       DIRECTORY ${HEADERS_DIR}/
-      DESTINATION ${INCLUDE_INSTALL_DIR}
+      DESTINATION "${PACKAGE_INCLUDE_DESTINATION}"
       FILES_MATCHING
       PATTERN "*.h"
       PATTERN "*.hpp"
       PATTERN ".svn" EXCLUDE)
   endforeach()
 
+  # Install cmake targets files
+  install(
+    EXPORT ${TARGETS_EXPORT_NAME}
+    NAMESPACE "${CONFIG_NAMESPACE}"
+    DESTINATION "${CONFIG_INSTALL_DIR}"
+    FILE ${PROJECT_NAME}Targets.cmake
+  )
+  ###################################################################
 endmacro()
 
-
-macro(cnr_configure_gtest trg deps)
-
-  gtest_discover_tests(${trg})
-
-  if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
-    target_link_libraries(
-      ${trg}
-      PUBLIC
-      ${deps}
-      Threads::Threads
-      GTest::Main
-      Boost::program_options
-      Boost::system
-      Boost::filesystem
-      Boost::iostreams
-      Boost::regex)
-  else()
-    target_link_libraries(${trg}
-      ${dep} GTest::Main)
-    if(THREADS_HAVE_PTHREAD_ARG)
-      target_compile_options(${trg} PUBLIC "-pthread")
-    endif()
-    if(CMAKE_THREAD_LIBS_INIT)
-      target_link_libraries(${trg}
-                            "${CMAKE_THREAD_LIBS_INIT}")
-    endif()
-  endif()
-endmacro()
-
-function(enable_coverage _project_name)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-    target_compile_options(${_project_name} INTERFACE --coverage -O0 -g)
-    target_link_libraries(${_project_name} INTERFACE --coverage)
-  endif()
-endfunction()
