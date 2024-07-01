@@ -24,14 +24,12 @@ jobs:
           }
     steps:
     - uses: actions/checkout@v1
-
     - name: Install dependencies
       if: ${{ runner.os == 'Linux' }}
       run: sudo apt-get update && 
        sudo apt-get install -y --fix-missing libeigen3-dev libyaml-cpp-dev 
           libboost-iostreams-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev 
           libgtest-dev cmake tree lcov gcovr python3-lxml 
-
     - name: Download Ninja and CMake
       id: cmake_and_ninja
       shell: cmake -P {0}
@@ -82,7 +80,6 @@ jobs:
             COMMAND chmod +x ${cmake_dir}/cmake
           )
         endif()
-
     - name: Configure
       shell: cmake -P {0}
       run: |
@@ -138,10 +135,8 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Bad exit status")
         endif()
-
     - name: Check Path
       run: pwd && ls
-
     - name: Run tests
       shell: cmake -P {0}
       run: |
@@ -170,7 +165,6 @@ jobs:
       with:
         name: test_results_xml
         path: ${{runner.workspace}}/build/test-results/**/*.xml
-
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
