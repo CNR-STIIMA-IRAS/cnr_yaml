@@ -22,10 +22,12 @@ cnr_set_flags()
 # ##############################################################################
 # DEPENDENCIES            ##
 # ##############################################################################
+## Eigen
 find_package(Eigen3 REQUIRED COMPONENTS Core Dense  Geometry)
 list(APPEND DEPENDENCIES_LIBRARIES  Eigen3::Eigen)
 list(APPEND DEPENDENCIES_INCLUDE_DIRS "${EIGEN3_INCLUDE_DIRS}")
 
+## yaml-cpp
 find_package(yaml-cpp REQUIRED)
 if(yaml-cpp VERSION_LESS "0.8")
   set(YAML_CPP_HAS_NAMESPACE 0)
@@ -40,6 +42,7 @@ else()
   list(APPEND DEPENDENCIES_LIBRARIES yaml-cpp)
 endif()
 
+## Boost
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
@@ -51,8 +54,19 @@ if(NOT BOOL:${YAML_CPP_HAS_NAMESPACE})
   list(APPEND DEPENDENCIES_INCLUDE_DIRS  ${yaml-cpp_INCLUDE_DIRS})
 endif()
 
-cnr_install_directories(CNR_INSTALL_INCLUDE_DIR CNR_INSTALL_LIB_DIR
-                        CNR_INSTALL_BIN_DIR CNR_INSTALL_SHARE_DIR)
+## Catkin is a fake dependency. It is used to test the cmake configuration
+find_package(catkin QUIET)
+if(${catkin_FOUND})
+  set(PACKAGE_LIB_DESTINATION     "${CATKIN_PACKAGE_LIB_DESTINATION}")
+  set(PACKAGE_BIN_DESTINATION     "${CATKIN_PACKAGE_BIN_DESTINATION}")
+  set(PACKAGE_INCLUDE_DESTINATION "${CATKIN_PACKAGE_INCLUDE_DESTINATION}")
+  set(CONFIG_INSTALL_DIR           "share/${PROJECT_NAME}/cmake_alternative")
+else()
+  set(PACKAGE_LIB_DESTINATION      "${CMAKE_INSTALL_PREFIX}/lib")
+  set(PACKAGE_BIN_DESTINATION      "${CMAKE_INSTALL_PREFIX}/bin")
+  set(PACKAGE_INCLUDE_DESTINATION  "${CMAKE_INSTALL_PREFIX}/include")
+  set(CONFIG_INSTALL_DIR           "share/${PROJECT_NAME}/cmake")
+endif()
 # ##############################################################################
 # END DEPENDANCIES        ##
 # ##############################################################################
@@ -62,10 +76,9 @@ cnr_install_directories(CNR_INSTALL_INCLUDE_DIR CNR_INSTALL_LIB_DIR
 # ##############################################################################
 # Build       ##
 # ##############################################################################
-set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/)
-set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}/)
 
-add_library(cnr_yaml SHARED ${SRC_DIR}/node_utils.cpp)
+## SHARED
+add_library(cnr_yaml SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
 
 target_include_directories(
   cnr_yaml
@@ -77,8 +90,33 @@ target_link_libraries(
   cnr_yaml
   PUBLIC "${DEPENDENCIES_LIBRARIES}")
 
+set_target_properties(cnr_yaml PROPERTIES 
+  OUTPUT_NAME cnr_yaml
+  CMAKE_POSITION_INDEPENDENT_CODE ON
+  INSTALL_RPATH "${PACKAGE_LIB_DESTINATION}")
+
 add_library(cnr_yaml::cnr_yaml ALIAS cnr_yaml)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
+
+## STATIC
+add_library(cnr_yaml_static STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
+target_include_directories(
+    cnr_yaml_static
+    PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>"
+    "$<INSTALL_INTERFACE:include>")
+  
+target_link_libraries(
+    cnr_yaml_static
+    PUBLIC "${DEPENDENCIES_LIBRARIES}")
+
+set_target_properties(cnr_yaml_static PROPERTIES 
+  OUTPUT_NAME cnr_yaml
+  CMAKE_POSITION_INDEPENDENT_CODE ON
+  INSTALL_RPATH "${PACKAGE_LIB_DESTINATION}")
+
+add_library(cnr_yaml::cnr_yaml_static ALIAS cnr_yaml_static)
+list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml_static)
 # ##############################################################################
 # END - Build ##
 # ##############################################################################
@@ -94,11 +132,6 @@ if(ENABLE_TESTING)
   include(cmake/coverage.cmake)
   add_coverage_target("*/tests/*")
 
-  find_package(GTest REQUIRED)
-  include(GoogleTest)
-  enable_testing()
-  include(CTest REQUIRED)
-
   add_executable(test_yaml
                 ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
 
@@ -107,8 +140,6 @@ if(ENABLE_TESTING)
 
   target_compile_definitions(test_yaml
                       PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}")
-
-  
 
   list(APPEND EXECUTABLE_TARGETS_LIST test_yaml)
 endif()
@@ -124,20 +155,12 @@ endif()
 list(APPEND HEADERS_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
      "${CMAKE_CURRENT_BINARY_DIR}/include/cnr_yaml")
 
-if(USE_ROS1)
-  cnr_install_catkin_policy()
-else()
-  set(PROJECT_VERSION 1.0.0)
-  cnr_install_cmake_policy(
-    ${CNR_INSTALL_INCLUDE_DIR}
-    ${CNR_INSTALL_LIB_DIR}
-    ${CNR_INSTALL_BIN_DIR}
-    ${extracted_version}
-    "${LIBRARIES_TARGETS_LIST}"
-    "${EXECUTABLE_TARGETS_LIST}"
-    "${HEADERS_DIRS}")
-endif()
+cnr_install(
+  ${extracted_version}
+  "${LIBRARIES_TARGETS_LIST}"
+  "${EXECUTABLE_TARGETS_LIST}"
+  "${HEADERS_DIRS}")
+
 # ##############################################################################
 # END INSTALL     ##
 # ##############################################################################
-
