@@ -4,8 +4,6 @@
 #  cnr_yaml_LIBRARIES    - libraries to link against
 #  cnr_yaml_EXECUTABLE   - the bar executable
 
-set(cnr_yaml_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
-
 include(CMakeFindDependencyMacro)
 find_dependency(Boost REQUIRED COMPONENTS system filesystem program_options iostreams regex)
 find_dependency(yaml-cpp REQUIRED)
@@ -18,8 +16,24 @@ if(yaml-cpp VERSION_LESS "0.8")
 endif()
 
 # These are IMPORTED targets created by cnr_yamlTargets.cmake
-set(cnr_yaml_LIBRARIES @LIBRARY_TARGETS_LIST@)
-set(cnr_yaml_EXECUTABLES @EXECUTABLE_TARGETS_LIST@)
+set(cnr_yaml_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set(cnr_yaml_LIBRARIES    "@EXPORTED_LIBRARY_TARGETS_LIST@")
+set(cnr_yaml_EXECUTABLES  "@EXPORTED_EXECUTABLE_TARGETS_LIST@")
+set(cnr_yaml_RPATH    "@EXPORTED_LIBRARY_TARGET_RPATH@")
 
 # Our library dependencies (contains definitions for IMPORTED targets)
 include("${CMAKE_CURRENT_LIST_DIR}/cnr_yamlTargets.cmake")
+
+message(STATUS ">>> ${cnr_yaml_RPATH}/libcnr_yaml.a")
+set_target_properties(cnr_yaml::cnr_yaml_static PROPERTIES
+  IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}"
+)
+
+get_target_property(check_imported_path cnr_yaml::cnr_yaml_static IMPORTED_LOCATION_NOCONFIG)
+
+set_target_properties(cnr_yaml::cnr_yaml PROPERTIES
+  IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}"
+)
+
+get_target_property(check_imported_path cnr_yaml::cnr_yaml_static IMPORTED_LOCATION_NOCONFIG)
+message(STATUS "<<< ${check_imported_path}")
