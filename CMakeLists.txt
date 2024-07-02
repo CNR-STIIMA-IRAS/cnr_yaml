@@ -56,11 +56,11 @@ endif()
 
 ## Catkin is a fake dependency. It is used to test the cmake configuration
 find_package(catkin QUIET)
-message(STATUS "Catkin found: ${catkin_FOUND}")
 if(${catkin_FOUND})
   set(PACKAGE_LIB_DESTINATION     "${CATKIN_PACKAGE_LIB_DESTINATION}")
   set(PACKAGE_BIN_DESTINATION     "${CATKIN_PACKAGE_BIN_DESTINATION}")
   set(PACKAGE_INCLUDE_DESTINATION "${CATKIN_PACKAGE_INCLUDE_DESTINATION}")
+  message(STATUS "Catkin found: ${CATKIN_PACKAGE_INCLUDE_DESTINATION}")
   set(CONFIG_INSTALL_DIR           "share/${PROJECT_NAME}/cmake_alternative")
 else()
   set(PACKAGE_LIB_DESTINATION      "${CMAKE_INSTALL_PREFIX}/lib")
