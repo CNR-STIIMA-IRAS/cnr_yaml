@@ -92,8 +92,7 @@ target_link_libraries(
 
 set_target_properties(cnr_yaml PROPERTIES 
   OUTPUT_NAME cnr_yaml
-  CMAKE_POSITION_INDEPENDENT_CODE ON
-  INSTALL_RPATH "${PACKAGE_LIB_DESTINATION}")
+  CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(cnr_yaml::cnr_yaml ALIAS cnr_yaml)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
@@ -112,8 +111,7 @@ target_link_libraries(
 
 set_target_properties(cnr_yaml_static PROPERTIES 
   OUTPUT_NAME cnr_yaml
-  CMAKE_POSITION_INDEPENDENT_CODE ON
-  INSTALL_RPATH "${PACKAGE_LIB_DESTINATION}")
+  CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(cnr_yaml::cnr_yaml_static ALIAS cnr_yaml_static)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml_static)
@@ -156,11 +154,9 @@ list(APPEND HEADERS_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
      "${CMAKE_CURRENT_BINARY_DIR}/include/cnr_yaml")
 
 cnr_install(
-  ${extracted_version}
   "${LIBRARIES_TARGETS_LIST}"
   "${EXECUTABLE_TARGETS_LIST}"
   "${HEADERS_DIRS}")
-
 # ##############################################################################
 # END INSTALL     ##
 # ##############################################################################
