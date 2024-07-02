@@ -150,8 +150,7 @@ endif()
 # ##############################################################################
 # INSTALL         ##
 # ##############################################################################
-list(APPEND HEADERS_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
-     "${CMAKE_CURRENT_BINARY_DIR}/include/cnr_yaml")
+list(APPEND HEADERS_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 cnr_install(
   "${LIBRARIES_TARGETS_LIST}"
