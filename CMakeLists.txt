@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrConfigMacros.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnr_macros.cmake)
 
 # ##############################################################################
 # PRELIMINARIES           ##
@@ -22,7 +22,7 @@ cnr_set_flags()
 # ##############################################################################
 # DEPENDENCIES            ##
 # ##############################################################################
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnr_yamlDependencies.cmake)
 
 ## Catkin is a fake dependency. It is used to test the cmake configuration
 if(${catkin_FOUND})
@@ -56,7 +56,7 @@ target_include_directories(
 
 target_link_libraries(
   cnr_yaml
-  PUBLIC "${DEPENDENCIES_LIBRARIES}")
+  PUBLIC "${DEPENDENCIES_TARGETS}")
 
 set_target_properties(cnr_yaml PROPERTIES 
   OUTPUT_NAME cnr_yaml
@@ -75,7 +75,7 @@ target_include_directories(
   
 target_link_libraries(
     cnr_yaml_static
-    PUBLIC "${DEPENDENCIES_LIBRARIES}")
+    PUBLIC "${DEPENDENCIES_TARGETS}")
 
 set_target_properties(cnr_yaml_static PROPERTIES 
   OUTPUT_NAME cnr_yaml

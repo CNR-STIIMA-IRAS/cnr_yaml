@@ -119,13 +119,17 @@ macro(
   set(TARGETS_EXPORT_NAME            "${PROJECT_NAME}Targets")
   set(VERSION_CONFIG                 "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
   set(PROJECT_CONFIG_OUTPUT          "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
-  set(PROJECT_CONFIG_INPUT_TEMPLATE  "cmake/cnrConfigTemplate.cmake.in")
+  set(PROJECT_CONFIG_INPUT_TEMPLATE  "cmake/cnr_yamlConfig.cmake.in")
 
   # Parameter template in the PROJECT_CONFIG_INPUT_TEMPLATE
-  set(EXPORTED_TARGET_INCLUDE_DIRS      "${CMAKE_INSTALL_PREFIX}/${PACKAGE_INCLUDE_DESTINATION}")
-  set(EXPORTED_LIBRARY_TARGETS_LIST     "${LIBRARY_TARGETS_LIST}")
-  set(EXPORTED_EXECUTABLE_TARGETS_LIST  "${EXECUTABLE_TARGETS_LIST}")
-  set(EXPORTED_LIBRARY_TARGET_RPATH     "${PACKAGE_LIB_DESTINATION}")
+  list(APPEND DEPENDENCIES_INCLUDE_DIRS  ${PACKAGE_INCLUDE_DESTINATION})
+  list(REMOVE_DUPLICATES DEPENDENCIES_INCLUDE_DIRS)
+  set(EXPORTED_TARGET_INCLUDE_DIRS      "${DEPENDENCIES_INCLUDE_DIRS}")
+
+  list(APPEND DEPENDENCIES_LINK_LIBRARIES  ${LIBRARY_TARGETS_LIST})
+  set(EXPORTED_LIBRARY_TARGETS_LIST        "${DEPENDENCIES_LINK_LIBRARIES}")
+  set(EXPORTED_EXECUTABLE_TARGETS_LIST     "${EXECUTABLE_TARGETS_LIST}")
+  set(EXPORTED_LIBRARY_TARGET_RPATH        "${PACKAGE_LIB_DESTINATION}")
   
   ##
   message(STATUS "CONFIG_INSTALL_DIR              = ${CONFIG_INSTALL_DIR}"           )
@@ -135,7 +139,7 @@ macro(
   message(STATUS "PROJECT_CONFIG_OUTPUT           = ${PROJECT_CONFIG_OUTPUT}"        )
   message(STATUS "PROJECT_CONFIG_INPUT_TEMPLATE   = ${PROJECT_CONFIG_INPUT_TEMPLATE}")
   message(STATUS "EXPORTED_TARGET_INCLUDE_DIRS    = ${EXPORTED_TARGET_INCLUDE_DIRS}"  )
-  message(STATUS "EXPORTED_LIBRARY_TARGETS_LIST   = ${LIBRARY_TARGETS_LIST}"         )
+  message(STATUS "EXPORTED_LIBRARY_TARGETS_LIST   = ${EXPORTED_LIBRARY_TARGETS_LIST}" )
   message(STATUS "EXPORTED_EXECUTABLE_TARGETS_LIST= ${EXECUTABLE_TARGETS_LIST}"      )
 
   # 1 install files
@@ -183,14 +187,11 @@ macro(
   
   #------------------------------------------------------------------------------
   # Install cmake config files
-  install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake"
+  install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnr_yamlDependencies.cmake"
           DESTINATION "${CONFIG_INSTALL_DIR}")
 
-  install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake"
+  install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnr_yamlDependencies.cmake"
           DESTINATION "${CONFIG_INSTALL_DIR_ALTERNATIVE}")
-
-  install(FILES )
-
 endmacro()
 
 #
@@ -236,3 +237,42 @@ macro(cnr_configure_gtest trg deps)
 
   endif()
 endmacro()
+
+
+# Get all propreties that cmake supports
+if(NOT CMAKE_PROPERTY_LIST)
+    execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
+    
+    # Convert command output into a CMake list
+    string(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+    string(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+    list(REMOVE_DUPLICATES CMAKE_PROPERTY_LIST)
+endif()
+    
+function(print_properties)
+    message("CMAKE_PROPERTY_LIST = ${CMAKE_PROPERTY_LIST}")
+endfunction()
+    
+function(print_target_properties target)
+    if(NOT TARGET ${target})
+      message(STATUS "There is no target named '${target}'")
+      return()
+    endif()
+
+    foreach(property ${CMAKE_PROPERTY_LIST})
+        string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" property ${property})
+
+        # Fix https://stackoverflow.com/questions/32197663/how-can-i-remove-the-the-location-property-may-not-be-read-from-target-error-i
+        if(property STREQUAL "LOCATION" OR property MATCHES "^LOCATION_" OR property MATCHES "_LOCATION$")
+            continue()
+        endif()
+
+        get_property(was_set TARGET ${target} PROPERTY ${property} SET)
+        if(was_set)
+            get_target_property(value ${target} ${property})
+            message("${target} ${property} = ${value}")
+        endif()
+    endforeach()
+endfunction()
+
+
