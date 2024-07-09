@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16.0)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnr_macros.cmake)
-
 # ##############################################################################
 # PRELIMINARIES           ##
 # ##############################################################################
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrMacros.cmake)
+
 get_project_name("package.xml" extracted_name extracted_version)
 
 project(
@@ -22,20 +22,7 @@ cnr_set_flags()
 # ##############################################################################
 # DEPENDENCIES            ##
 # ##############################################################################
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnr_yamlDependencies.cmake)
-
-## Catkin is a fake dependency. It is used to test the cmake configuration
-if(${catkin_FOUND})
-  set(PACKAGE_LIB_DESTINATION     "${CATKIN_GLOBAL_LIB_DESTINATION}")
-  set(PACKAGE_BIN_DESTINATION     "${CATKIN_GLOBAL_LIBEXEC_DESTINATION}/${PROJECT_NAME}")
-  set(PACKAGE_INCLUDE_DESTINATION "${CATKIN_GLOBAL_INCLUDE_DESTINATION}/${PROJECT_NAME}")
-  set(CONFIG_INSTALL_DIR          "share/${PROJECT_NAME}/cmake_alternative")
-else()
-  set(PACKAGE_LIB_DESTINATION      "${CMAKE_INSTALL_PREFIX}/lib")
-  set(PACKAGE_BIN_DESTINATION      "${CMAKE_INSTALL_PREFIX}/bin")
-  set(PACKAGE_INCLUDE_DESTINATION  "${CMAKE_INSTALL_PREFIX}/include")
-  set(CONFIG_INSTALL_DIR           "share/${PROJECT_NAME}/cmake")
-endif()
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake) 
 # ##############################################################################
 # END DEPENDANCIES        ##
 # ##############################################################################
@@ -48,11 +35,17 @@ endif()
 ## SHARED
 add_library(cnr_yaml SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
 
+# Include DIRECTORIES: include and src
+list(APPEND BUILD_INTERFACE_INCLUDE_DIRS "${DEPENDENCIES_INCLUDE_DIRS}"
+     "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+list(APPEND INSTALL_INTERFACE_INCLUDE_DIRS "${DEPENDENCIES_INCLUDE_DIRS}"
+     include)
 target_include_directories(
   cnr_yaml
   PUBLIC
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>"
-  "$<INSTALL_INTERFACE:include>")
+  "$<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIRS}>"
+  "$<INSTALL_INTERFACE:${INSTALL_INTERFACE_INCLUDE_DIRS}>")
 
 target_link_libraries(
   cnr_yaml
@@ -119,7 +112,7 @@ endif()
 # INSTALL         ##
 # ##############################################################################
 list(APPEND HEADERS_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrInstall.cmake) 
 cnr_install(
   "${LIBRARIES_TARGETS_LIST}"
   "${EXECUTABLE_TARGETS_LIST}"
