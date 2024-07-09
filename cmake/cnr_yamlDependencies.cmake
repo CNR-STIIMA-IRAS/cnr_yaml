@@ -3,6 +3,8 @@
 ## Ton idea is to have a single file that can be included in the CMakeLists.txt of the package
 ## and in the >package>Config.cmake
 ## https://discourse.cmake.org/t/how-to-conditionally-call-either-find-pacakge-or-find-dependency/8175
+include(CMakeFindDependencyMacro)
+
 if(${PROJECT_NAME} STREQUAL "cnr_yaml")
   message(STATUS "Loading cnr_yamlDependencies.cmake for the project '${PROJECT_NAME}'")
   macro(_find_package)
@@ -35,17 +37,6 @@ set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 _find_package(Boost REQUIRED COMPONENTS system filesystem program_options iostreams regex)
-
-## Ament is a fake dependency. It is used to test the cmake configuration
-_find_package(ament_cmake QUIET)
-
-## Catkin is a fake dependency. It is used to test the cmake configuration
-if(NOT ${ament_cmake_FOUND})
-  _find_package(catkin QUIET)
-endif()
-
-
-
 
 ## In the case the cnr_yamlDependencies is imported from CMakeLists.txt of the 
 ## cnr_yaml project, the following variables are defined
