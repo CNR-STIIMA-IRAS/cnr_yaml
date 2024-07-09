@@ -26,7 +26,7 @@ _find_package(Eigen3 REQUIRED COMPONENTS Core Dense  Geometry)
 _find_package(yaml-cpp REQUIRED)
 if(yaml-cpp VERSION_LESS "0.8")
   _find_package(PkgConfig REQUIRED)
-  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET)
+  pkg_check_modules(YAML_CPP REQUIRED yaml-cpp IMPORTED_TARGET GLOBAL)
   add_library(yaml-cpp::yaml-cpp ALIAS PkgConfig::YAML_CPP)
 endif()
 
