@@ -16,13 +16,13 @@ set(cnr_yaml_RPATH        "@EXPORTED_LIBRARY_TARGET_RPATH@")
 include("${CMAKE_CURRENT_LIST_DIR}/cnr_yamlTargets.cmake")
 
 set_target_properties(cnr_yaml::cnr_yaml PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.so"
+  # IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.so"
   BUILD_RPATH "${cnr_yaml_RPATH}"
   INSTALL_RPATH "${cnr_yaml_RPATH}"
 )
 
 set_target_properties(cnr_yaml::cnr_yaml_static PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.a"
+  # IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.a"
   BUILD_RPATH "${cnr_yaml_RPATH}"
   INSTALL_RPATH "${cnr_yaml_RPATH}"
 )
