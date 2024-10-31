@@ -29,7 +29,7 @@ jobs:
       run: sudo apt-get update && 
        sudo apt-get install -y --fix-missing libeigen3-dev libyaml-cpp-dev 
           libboost-iostreams-dev libboost-date-time-dev libboost-filesystem-dev libboost-program-options-dev 
-          libgtest-dev cmake tree lcov gcovr python3-lxml 
+          libgtest-dev cmake tree lcov gcovr python3-lxml
     - name: Download Ninja and CMake
       id: cmake_and_ninja
       shell: cmake -P {0}
@@ -106,7 +106,6 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-            -D ENABLE_COVERAGE=ON
             -D ENABLE_TESTING=ON
             -D COMPILE_EXAMPLE=OFF
           RESULT_VARIABLE result
