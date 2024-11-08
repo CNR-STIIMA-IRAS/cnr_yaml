@@ -59,9 +59,10 @@ if(${PROJECT_NAME} STREQUAL "cnr_yaml")
   list(APPEND DEPENDENCIES_LINK_LIBRARIES ${Boost_FILESYSTEM_LIBRARY_RELEASE} 
             ${Boost_SYSTEM_LIBRARY_RELEASE} ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE} ${Boost_IOSTREAMS_LIBRARY_RELEASE} 
             ${Boost_REGEX_LIBRARY_RELEASE})
+
+  ## Catkin is a dependency-fake package: if I found it it does mean that I sourced ROS into the shell I am building
+  ## => therefore, I assume that I want to follow the 'catkin'-way in installing the packages
+  _find_package(catkin)
+  message(STATUS "CATKIN ENVIRONMENT DETECTED=${catkin_FOUND}")
 endif()
 
-## Catkin is a dependency-fake package: if I found it it does mean that I sourced ROS into the shell I am building
-## => therefore, I assume that I want to follow the 'catkin'-way in installing the packages
-_find_package(catkin)
-message(STATUS "CATKIN ENVIRONMENT DETECTED=${catkin_FOUND}")
