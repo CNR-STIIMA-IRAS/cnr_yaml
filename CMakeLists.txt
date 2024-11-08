@@ -28,9 +28,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake)
 # ##############################################################################
 
 
+
 # ##############################################################################
 # Build       ##
 # ##############################################################################
+option(BUILD_UNIT_TESTS "Build the unit tests" ON)
 
 ## SHARED
 add_library(cnr_yaml SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
@@ -86,7 +88,7 @@ list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml_static)
 # TESTING         ##
 # ##############################################################################
 set(EXECUTABLE_TARGETS_LIST "")
-if(ENABLE_TESTING)
+if(BUILD_UNIT_TESTS)
 
   include(cmake/coverage.cmake)
   add_coverage_target("*/tests/*")

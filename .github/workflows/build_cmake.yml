@@ -106,7 +106,7 @@ jobs:
             -S .
             -B build
             -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-            -D ENABLE_TESTING=ON
+            -D BUILD_UNIT_TESTS=ON
             -D COMPILE_EXAMPLE=OFF
           RESULT_VARIABLE result
         )
