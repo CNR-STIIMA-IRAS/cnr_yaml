@@ -11,14 +11,19 @@
 #include <cnr_yaml/type_traits.h>
 #include <cnr_yaml/eigen.h>
 #include <cnr_yaml/node_utils.h>
-#include <cnr_yaml/impl/param_sequence.hpp>
-#include <cnr_yaml/impl/param_map.hpp>
-#include <cnr_yaml/impl/param_insert.hpp>
+
+// BUGFIX - recursive declrataion - raised in U24.04
+// #include <cnr_yaml/impl/param_sequence.hpp>    // moved at the file end. 
+// #include <cnr_yaml/impl/param_map.hpp>         // moved at the file end. Evaluate if remove.
+// #include <cnr_yaml/impl/param_insert.hpp>      // useless file. To be removed.
 
 namespace cnr
 {
 namespace yaml
 {
+
+template <typename T> bool get_sequence(const YAML::Node& node, T& ret, std::string& what, const bool& implicit_cast_if_possible);
+template<typename T>  bool get_map(const YAML::Node& node, T&, std::string& what, const bool& implicit_cast_if_possible);
 
 // =====================================================================================================================
 //
@@ -292,7 +297,63 @@ struct as_if<std::vector<T, A>, std::optional<std::vector<T, A>>>
     return val;
   }
 };
-
 }  // namespace YAML
+
+
+// BUGFIX - recursive declrataion - raised in U24.04 
+#include <cnr_yaml/impl/param_sequence.hpp>
+#include <cnr_yaml/impl/param_map.hpp>
+namespace cnr
+{
+namespace yaml
+{
+/**
+ * @brief Get the sequence object
+ *
+ * @tparam T
+ * @param node
+ * @param ret
+ * @param what
+ * @return true
+ * @return false
+ */
+template <typename T>
+inline bool get_sequence(const YAML::Node& node, T& ret, std::string& what, const bool& implicit_cast_if_possible)
+{
+  return _get_sequence(node, ret, what, implicit_cast_if_possible);
+}
+
+// =============================================================================================
+// MAP
+// =============================================================================================
+template<typename T>
+inline bool get_map(const YAML::Node& node, T&, std::string& what, const bool&)
+{
+  std::stringstream _node;
+  _node << node;
+  what = "The type ' "
+        + boost::typeindex::type_id_with_cvr<decltype(T())>().pretty_name() 
+          + "' is not supported. You must specilized your own 'get_map' template function\n Input Node: " + _node.str();
+  return false;
+}
+
+template<>
+inline bool get_map(const YAML::Node& node, YAML::Node& ret, std::string& what, const bool& implicit_cast_if_possible)
+{
+  UNUSED(what);
+  UNUSED(implicit_cast_if_possible);
+  ret = node;
+  return true;
+}
+// =============================================================================================
+// END MAP
+// =============================================================================================
+
+
+
+}  // namespace yaml
+}  // namespace cnr
+
+
 
 #endif  // CNR_YAML_UTILITIES__INCLUDE__CNR_YAML_UTILITIES__IMPL__PARAM__HPP

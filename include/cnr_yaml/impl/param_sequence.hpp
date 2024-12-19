@@ -302,42 +302,6 @@ inline bool _get_sequence(const YAML::Node& node, T& ret, std::string& what, con
   return false;
 }
 
-/**
- * @brief Get the sequence object
- *
- * @tparam T
- * @param node
- * @param ret
- * @param what
- * @return true
- * @return false
- */
-template <typename T>
-inline bool get_sequence(const YAML::Node& node, T& ret, std::string& what, const bool& implicit_cast_if_possible)
-{
-  return _get_sequence(node, ret, what, implicit_cast_if_possible);
-}
-// =============================================================================================
-// END GET SEQUENCE
-// =============================================================================================
-
-// =============================================================================================
-// SET SEQUENCE
-// =============================================================================================
-// template <typename Derived>
-// bool _set_sequence_eigen(Eigen::MatrixBase<Derived> const& node, YAML::Node& ret, std::string& what, const bool& implicit_cast_if_possible);
-
-// template <typename T, typename A>
-// bool _set_sequence(const std::vector<T, A>& node, YAML::Node& ret, std::string& what, const bool& implicit_cast_if_possible);
-
-// template <typename T, typename A>
-// bool _set_sequence(const std::vector<std::vector<T, A>>& node, YAML::Node& ret, std::string& what, const bool& implicit_cast_if_possible);
-
-// template <typename T, std::size_t N>
-// bool _set_sequence(const YAML::Node& node, & ret, std::string& what, const bool& implicit_cast_if_possible);
-
-// template <typename T, std::size_t N, std::size_t M>
-// bool _set_sequence(const YAML::Node& node, std::array<std::array<T, M>, N>& ret, std::string& what, const bool& implicit_cast_if_possible);
 // /**
 //  * @brief Get the sequence object
 //  *
@@ -349,12 +313,12 @@ inline bool get_sequence(const YAML::Node& node, T& ret, std::string& what, cons
 //  * @return false
 //  */
 // template <typename T>
-// inline bool set_sequence(const YAML::Node& node, T& ret, std::string& what, const bool& implicit_cast_if_possible)
+// inline bool get_sequence(const YAML::Node& node, T& ret, std::string& what, const bool& implicit_cast_if_possible)
 // {
-//   return _set_sequence(node, ret, what, implicit_cast_if_possible);
+//   return _get_sequence(node, ret, what, implicit_cast_if_possible);
 // }
 // =============================================================================================
-// END SET SEQUENCE
+// END GET SEQUENCE
 // =============================================================================================
 
 
