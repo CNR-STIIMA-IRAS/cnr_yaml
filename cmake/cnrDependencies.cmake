@@ -20,6 +20,7 @@ else()
 endif()
 ############################################
 
+message(STATUS "The 'find_package' will look for modules under the following paths: ${CMAKE_PREFIX_PATH};${CMAKE_FRAMEWORK_PATH};${CMAKE_APPBUNDLE_PATH};${CMAKE_MODULE_PATH};${CMAKE_SYSTEM_PREFIX_PATH};${CMAKE_SYSTEM_FRAMEWORK_PATH};${CMAKE_SYSTEM_APPBUNDLE_PATH}")
 
 ## Eigen
 _find_package(Eigen3 REQUIRED COMPONENTS Core Dense  Geometry)
