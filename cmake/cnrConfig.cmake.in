@@ -4,7 +4,9 @@
 #  cnr_yaml_LIBRARIES    - libraries to link against
 #  cnr_yaml_EXECUTABLE   - the bar executable
 
-include("${CMAKE_CURRENT_LIST_DIR}/cnrDependencies.cmake")
+# Here I copy the content of the file ${CMAKE_CURRENT_LIST_DIR}/cnrDependencies.cmake 
+@DEPENDENCIES_FILE_CONTENT@
+# cnrDependencies copied!
 
 # These are IMPORTED targets created by cnr_yamlTargets.cmake
 set(cnr_yaml_INCLUDE_DIRS "@EXPORTED_TARGET_INCLUDE_DIRS@")
@@ -13,7 +15,7 @@ set(cnr_yaml_EXECUTABLES  "@EXPORTED_EXECUTABLE_TARGETS_LIST@")
 set(cnr_yaml_RPATH        "@EXPORTED_LIBRARY_TARGET_RPATH@")
 
 # Our library dependencies (contains definitions for IMPORTED targets)
-include("${CMAKE_CURRENT_LIST_DIR}/cnr_yamlTargets.cmake")
+include("@PACKAGE_CONFIG_DESTINATION@/cnr_yamlTargets.cmake")
 
 set_target_properties(cnr_yaml::cnr_yaml PROPERTIES
   IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.so"

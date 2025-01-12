@@ -1,10 +1,9 @@
 macro(cnr_install_directories)
-  ## Catkin is a fake dependency. It is used to test the cmake configuration
-  if(${catkin_FOUND})
+  if(BUILD_AS_A_CATKIN_PACKAGE)
     set(PACKAGE_LIB_DESTINATION     "${CATKIN_GLOBAL_LIB_DESTINATION}")
     set(PACKAGE_BIN_DESTINATION     "${CATKIN_GLOBAL_LIBEXEC_DESTINATION}/${PROJECT_NAME}")
     set(PACKAGE_INCLUDE_DESTINATION "${CATKIN_GLOBAL_INCLUDE_DESTINATION}")
-    set(PACKAGE_CONFIG_DESTINATION  "share/${PROJECT_NAME}/cmake_alternative")
+    set(PACKAGE_CONFIG_DESTINATION  "$ENV{HOME}/.local/share/cmake/${PROJECT_NAME}")
   else()
     set(PACKAGE_LIB_DESTINATION     "lib")
     set(PACKAGE_BIN_DESTINATION     "bin")
@@ -66,17 +65,19 @@ macro(
 
   set(EXPORTED_LIBRARY_TARGET_RPATH     "${CMAKE_INSTALL_PREFIX}/${PACKAGE_LIB_DESTINATION}")
   
-  ##
-  message(STATUS "PACKAGE_CONFIG_DESTINATION      = ${PACKAGE_CONFIG_DESTINATION}"      )
-  message(STATUS "CONFIG_NAMESPACE                = ${CONFIG_NAMESPACE}"                )
-  message(STATUS "TARGETS_EXPORT_NAME             = ${TARGETS_EXPORT_NAME}"             )
-  message(STATUS "VERSION_CONFIG                  = ${VERSION_CONFIG}"                  )
-  message(STATUS "PROJECT_CONFIG_OUTPUT           = ${PROJECT_CONFIG_OUTPUT}"           )
-  message(STATUS "PROJECT_CONFIG_INPUT_TEMPLATE   = ${PROJECT_CONFIG_INPUT_TEMPLATE}"   )
+  file(READ "${CMAKE_CURRENT_LIST_DIR}/cmake/cnrDependencies.cmake" DEPENDENCIES_FILE_CONTENT)
 
-  message(STATUS "EXPORTED_TARGET_INCLUDE_DIRS    = ${EXPORTED_TARGET_INCLUDE_DIRS}"    )
-  message(STATUS "EXPORTED_LIBRARY_TARGETS_LIST   = ${EXPORTED_LIBRARY_TARGETS_LIST}"   )
-  message(STATUS "EXPORTED_EXECUTABLE_TARGETS_LIST= ${EXPORTED_EXECUTABLE_TARGETS_LIST}")
+  ##
+  message(STATUS "Config Properties:")
+  message(STATUS "  CONFIG_NAMESPACE                = ${CONFIG_NAMESPACE}"                )
+  message(STATUS "  TARGETS_EXPORT_NAME             = ${TARGETS_EXPORT_NAME}"             )
+  message(STATUS "  VERSION_CONFIG                  = ${VERSION_CONFIG}"                  )
+  message(STATUS "  PROJECT_CONFIG_OUTPUT           = ${PROJECT_CONFIG_OUTPUT}"           )
+  message(STATUS "  PROJECT_CONFIG_INPUT_TEMPLATE   = ${PROJECT_CONFIG_INPUT_TEMPLATE}"   )
+
+  message(STATUS "  EXPORTED_TARGET_INCLUDE_DIRS    = ${EXPORTED_TARGET_INCLUDE_DIRS}"    )
+  message(STATUS "  EXPORTED_LIBRARY_TARGETS_LIST   = ${EXPORTED_LIBRARY_TARGETS_LIST}"   )
+  message(STATUS "  EXPORTED_EXECUTABLE_TARGETS_LIST= ${EXPORTED_EXECUTABLE_TARGETS_LIST}")
 
   # 1 install files
   foreach(HEADERS_DIR ${HEADERS_DIRS})
@@ -126,4 +127,11 @@ macro(
   install(FILES "${PROJECT_CONFIG_OUTPUT}" "${VERSION_CONFIG}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake"
           DESTINATION "${PACKAGE_CONFIG_DESTINATION}")
 
+  if(BUILD_AS_A_CATKIN_PACKAGE)
+    catkin_package(
+      INCLUDE_DIRS "${HEADERS_DIRS}"
+      LIBRARIES "${LIBRARY_TARGETS_LIST}"
+      DEPENDS "${DEPENDENCIES_KEY}"
+      EXPORTED_TARGETS "${LIBRARIES_TARGETS_LIST}")
+  endif()
 endmacro()

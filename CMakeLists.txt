@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.0)
 
 # ##############################################################################
-# PRELIMINARIES           ##
+# PRELIMINARIES                                                               ##
 # ##############################################################################
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrMacros.cmake)
 
@@ -14,28 +14,54 @@ project(
 
 cnr_set_flags()
 # ##############################################################################
-# END - PRELIMINARIES     ##
+# END - PRELIMINARIES                                                         ##
 # ##############################################################################
 
-
-
 # ##############################################################################
-# DEPENDENCIES            ##
+# OPTIONS                                                                     ##
 # ##############################################################################
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake) 
-# ##############################################################################
-# END DEPENDANCIES        ##
-# ##############################################################################
-
-
-
-# ##############################################################################
-# Build       ##
-# ##############################################################################
+option(CMAKE_EXPORT_COMPILE_COMMANDS "Export Compile Commands (clangd need it)" ON)
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
+option(BUILD_AS_A_CATKIN_PACKAGE "Build the library using CATKIN tools" OFF)
+option(BUILD_AS_AN_AMENT_PACKAGE "Build the library using AMENT tools" OFF)
 
-## SHARED
-add_library(cnr_yaml SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
+if(BUILD_AS_A_CATKIN_PACKAGE)
+  if(BUILD_AS_AN_AMENT_PACKAGE)
+    message(
+      FATAL_ERROR
+        "You selected both the options BUILD_AS_A_CATKIN_PACKAGE and BUILD_AS_AN_AMENT_PACKAGE.\
+      Please check your environment and re-run configuration.")
+  endif()
+  if(NOT $ENV{ROS_VERSION} STREQUAL "1")
+    message(FATAL_ERROR "You selected the option BUILD_AS_A_CATKIN_PACKAGE\
+       but the env variable ROS_VERSION is '$ENV{ROS_VERSION}'")
+  endif()
+  find_package(catkin REQUIRED)
+elseif(BUILD_AS_AN_AMENT_PACKAGE)
+  if(NOT $ENV{ROS_VERSION} STREQUAL "2")
+    message(FATAL_ERROR "You selected the option BUILD_AS_AN_AMENT_PACKAGE\
+        but the env variable ROS_VERSION is '$ENV{ROS_VERSION}'")
+  endif()
+  find_package(ament_cmake REQUIRED)
+endif()
+# ##############################################################################
+# END OPTIONS                                                                 ##
+# ##############################################################################
+
+# ##############################################################################
+# DEPENDENCIES                                                                ##
+# ##############################################################################
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrDependencies.cmake)
+# ##############################################################################
+# END DEPENDANCIES                                                            ##
+# ##############################################################################
+
+# ##############################################################################
+# Build                                                                       ##
+# ##############################################################################
+# SHARED
+add_library(cnr_yaml SHARED
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
 
 # Include DIRECTORIES: include and src
 list(APPEND BUILD_INTERFACE_INCLUDE_DIRS "${DEPENDENCIES_INCLUDE_DIRS}"
@@ -44,48 +70,39 @@ list(APPEND BUILD_INTERFACE_INCLUDE_DIRS "${DEPENDENCIES_INCLUDE_DIRS}"
 list(APPEND INSTALL_INTERFACE_INCLUDE_DIRS "${DEPENDENCIES_INCLUDE_DIRS}"
      include)
 target_include_directories(
-  cnr_yaml
-  PUBLIC
-  "$<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIRS}>"
-  "$<INSTALL_INTERFACE:${INSTALL_INTERFACE_INCLUDE_DIRS}>")
+  cnr_yaml PUBLIC "$<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIRS}>"
+                  "$<INSTALL_INTERFACE:${INSTALL_INTERFACE_INCLUDE_DIRS}>")
 
-target_link_libraries(
-  cnr_yaml
-  PUBLIC "${DEPENDENCIES_TARGETS}")
+target_link_libraries(cnr_yaml PUBLIC "${DEPENDENCIES_TARGETS}")
 
-set_target_properties(cnr_yaml PROPERTIES 
-  OUTPUT_NAME cnr_yaml
-  CMAKE_POSITION_INDEPENDENT_CODE ON)
+set_target_properties(cnr_yaml PROPERTIES OUTPUT_NAME cnr_yaml
+                                          CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(cnr_yaml::cnr_yaml ALIAS cnr_yaml)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
 
-## STATIC
-add_library(cnr_yaml_static STATIC ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
+# STATIC
+add_library(cnr_yaml_static STATIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
 target_include_directories(
-    cnr_yaml_static
-    PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>"
-    "$<INSTALL_INTERFACE:include>")
-  
-target_link_libraries(
-    cnr_yaml_static
-    PUBLIC "${DEPENDENCIES_TARGETS}")
+  cnr_yaml_static
+  PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>"
+         "$<INSTALL_INTERFACE:include>")
 
-set_target_properties(cnr_yaml_static PROPERTIES 
-  OUTPUT_NAME cnr_yaml
-  CMAKE_POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(cnr_yaml_static PUBLIC "${DEPENDENCIES_TARGETS}")
+
+set_target_properties(
+  cnr_yaml_static PROPERTIES OUTPUT_NAME cnr_yaml
+                             CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_library(cnr_yaml::cnr_yaml_static ALIAS cnr_yaml_static)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml_static)
 # ##############################################################################
-# END - Build ##
+# END - Build                                                                 ##
 # ##############################################################################
 
-
-
 # ##############################################################################
-# TESTING         ##
+# TESTING                                                                     ##
 # ##############################################################################
 set(EXECUTABLE_TARGETS_LIST "")
 if(BUILD_UNIT_TESTS)
@@ -93,32 +110,27 @@ if(BUILD_UNIT_TESTS)
   include(cmake/coverage.cmake)
   add_coverage_target("*/tests/*")
 
-  add_executable(test_yaml
-                ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
+  add_executable(test_yaml ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
 
   cnr_configure_gtest(test_yaml cnr_yaml::cnr_yaml
                       ${CMAKE_CURRENT_SOURCE_DIR}/include include)
 
   target_compile_definitions(test_yaml
-                      PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}")
+                             PRIVATE TEST_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
   list(APPEND EXECUTABLE_TARGETS_LIST test_yaml)
 endif()
 # ##############################################################################
-# TESTING         ##
+# TESTING                                                                     ##
 # ##############################################################################
 
-
-
 # ##############################################################################
-# INSTALL         ##
+# INSTALL                                                                     ##
 # ##############################################################################
 list(APPEND HEADERS_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrInstall.cmake) 
-cnr_install(
-  "${LIBRARIES_TARGETS_LIST}"
-  "${EXECUTABLE_TARGETS_LIST}"
-  "${HEADERS_DIRS}")
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/cnrInstall.cmake)
+cnr_install("${LIBRARIES_TARGETS_LIST}" "${EXECUTABLE_TARGETS_LIST}"
+            "${HEADERS_DIRS}")
 # ##############################################################################
-# END INSTALL     ##
+# END INSTALL                                                                 ##
 # ##############################################################################
