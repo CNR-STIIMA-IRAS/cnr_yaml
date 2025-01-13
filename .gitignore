@@ -9,6 +9,7 @@
 *.qtcreator*
 *.kate-swp
 *.vscode
+*.code*
 *.orig
 *.autosave 
 
