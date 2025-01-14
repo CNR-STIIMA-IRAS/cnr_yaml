@@ -132,6 +132,7 @@ macro(
       INCLUDE_DIRS "${HEADERS_DIRS}"
       LIBRARIES "${LIBRARY_TARGETS_LIST}"
       DEPENDS "${DEPENDENCIES_KEY}"
+      CFG_EXTRAS "cnrAliasTargets.cmake"
       EXPORTED_TARGETS "${LIBRARIES_TARGETS_LIST}")
   endif()
 endmacro()

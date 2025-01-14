@@ -22,9 +22,3 @@ set_target_properties(cnr_yaml::cnr_yaml PROPERTIES
   BUILD_RPATH "${cnr_yaml_RPATH}"
   INSTALL_RPATH "${cnr_yaml_RPATH}"
 )
-
-set_target_properties(cnr_yaml::cnr_yaml_static PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.a"
-  BUILD_RPATH "${cnr_yaml_RPATH}"
-  INSTALL_RPATH "${cnr_yaml_RPATH}"
-)

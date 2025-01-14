@@ -80,23 +80,6 @@ set_target_properties(cnr_yaml PROPERTIES OUTPUT_NAME cnr_yaml
 
 add_library(cnr_yaml::cnr_yaml ALIAS cnr_yaml)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
-
-# STATIC
-add_library(cnr_yaml_static STATIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/node_utils.cpp)
-target_include_directories(
-  cnr_yaml_static
-  PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>"
-         "$<INSTALL_INTERFACE:include>")
-
-target_link_libraries(cnr_yaml_static PUBLIC "${DEPENDENCIES_TARGETS}")
-
-set_target_properties(
-  cnr_yaml_static PROPERTIES OUTPUT_NAME cnr_yaml
-                             CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-add_library(cnr_yaml::cnr_yaml_static ALIAS cnr_yaml_static)
-list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml_static)
 # ##############################################################################
 # END - Build                                                                 ##
 # ##############################################################################
