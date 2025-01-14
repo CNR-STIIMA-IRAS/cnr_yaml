@@ -20,10 +20,10 @@ cnr_set_flags()
 # ##############################################################################
 # OPTIONS                                                                     ##
 # ##############################################################################
-option(CMAKE_EXPORT_COMPILE_COMMANDS "Export Compile Commands (clangd need it)" ON)
-option(BUILD_UNIT_TESTS "Build the unit tests" ON)
-option(BUILD_AS_A_CATKIN_PACKAGE "Build the library using CATKIN tools" OFF)
-option(BUILD_AS_AN_AMENT_PACKAGE "Build the library using AMENT tools" OFF)
+option(CMAKE_EXPORT_COMPILE_COMMANDS  "Export Compile Commands (clangd need it)"  ON)
+option(BUILD_UNIT_TESTS               "Build the unit tests"                      ON)
+option(BUILD_AS_A_CATKIN_PACKAGE      "Build the library using CATKIN tools"      OFF)
+option(BUILD_AS_AN_AMENT_PACKAGE      "Build the library using AMENT tools"       OFF)
 
 if(BUILD_AS_A_CATKIN_PACKAGE)
   if(BUILD_AS_AN_AMENT_PACKAGE)
@@ -78,7 +78,6 @@ target_link_libraries(cnr_yaml PUBLIC "${DEPENDENCIES_TARGETS}")
 set_target_properties(cnr_yaml PROPERTIES OUTPUT_NAME cnr_yaml
                                           CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-add_library(cnr_yaml::cnr_yaml ALIAS cnr_yaml)
 list(APPEND LIBRARIES_TARGETS_LIST cnr_yaml)
 # ##############################################################################
 # END - Build                                                                 ##
@@ -95,7 +94,7 @@ if(BUILD_UNIT_TESTS)
 
   add_executable(test_yaml ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
 
-  cnr_configure_gtest(test_yaml cnr_yaml::cnr_yaml
+  cnr_configure_gtest(test_yaml cnr_yaml
                       ${CMAKE_CURRENT_SOURCE_DIR}/include include)
 
   target_compile_definitions(test_yaml
