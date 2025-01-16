@@ -55,38 +55,3 @@ _find_package(
   program_options
   iostreams
   regex)
-
-# In the case the cnr_yamlDependencies is imported from CMakeLists.txt of the
-# cnr_yaml project, the following variables are defined Otherwise, they are
-# defined in the cnr_yamlConfig.cmake generated in the install configuration
-# steps
-if(${PROJECT_NAME} STREQUAL "cnr_yaml")
-
-  # Eigen
-  list(APPEND DEPENDENCIES_TARGETS Eigen3::Eigen)
-  list(APPEND DEPENDENCIES_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIRS})
-  list(APPEND DEPENDENCIES_KEY EIGEN3)
-  # yaml-cpp
-  list(APPEND DEPENDENCIES_TARGETS yaml-cpp::yaml-cpp)
-  list(APPEND DEPENDENCIES_KEY YAML_CPP)
-
-  # Boost
-  list(
-    APPEND
-    DEPENDENCIES_TARGETS
-    Boost::system
-    Boost::filesystem
-    Boost::program_options
-    Boost::iostreams
-    Boost::regex)
-  list(
-    APPEND
-    DEPENDENCIES_LINK_LIBRARIES
-    ${Boost_FILESYSTEM_LIBRARY_RELEASE}
-    ${Boost_SYSTEM_LIBRARY_RELEASE}
-    ${Boost_PROGRAM_OPTIONS_LIBRARY_RELEASE}
-    ${Boost_IOSTREAMS_LIBRARY_RELEASE}
-    ${Boost_REGEX_LIBRARY_RELEASE})
-  list(APPEND DEPENDENCIES_KEY Boost)
-
-endif()

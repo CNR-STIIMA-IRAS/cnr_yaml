@@ -1,0 +1,2 @@
+set(cnr_yaml_BUILD_AS_A_CATKIN_PACKAGE ON)
+set(cnr_yaml_BUILD_AS_AN_AMENT_PACKAGE OFF)
