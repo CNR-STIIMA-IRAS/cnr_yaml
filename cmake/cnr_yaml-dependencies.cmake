@@ -3,33 +3,16 @@
 # included in the CMakeLists.txt of the package and in the >package>Config.cmake
 # https://discourse.cmake.org/t/how-to-conditionally-call-either-find-pacakge-or-find-dependency/8175
 if(${PROJECT_NAME} STREQUAL "cnr_yaml")
-  message(
-    STATUS
-      "Loading cnr_yamlDependencies.cmake for the project '${PROJECT_NAME}'")
   macro(_find_package)
     find_package(${ARGN})
   endmacro()
 else()
-  message(
-    STATUS
-      "Running Project: ${PROJECT_NAME}.\
-       Loading cnr_yamlDependencies.cmake from cnr_yamlConfig.cmake"
-  )
   include(CMakeFindDependencyMacro)
-
   macro(_find_package)
     find_dependency(${ARGN})
   endmacro()
 endif()
 # ##############################################################################
-
-message(
-  STATUS
-    "The 'find_package' will look for modules under the following paths:\
-     ${CMAKE_PREFIX_PATH};${CMAKE_FRAMEWORK_PATH};${CMAKE_APPBUNDLE_PATH};\
-     ${CMAKE_MODULE_PATH};${CMAKE_SYSTEM_PREFIX_PATH};\
-     ${CMAKE_SYSTEM_FRAMEWORK_PATH};${CMAKE_SYSTEM_APPBUNDLE_PATH}"
-)
 
 # Eigen
 _find_package(Eigen3 REQUIRED COMPONENTS Core Dense Geometry)
