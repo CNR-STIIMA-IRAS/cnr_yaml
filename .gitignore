@@ -24,3 +24,5 @@ build/
 kdev4/
 
 compile_commands.json
+cmake/cnr_yaml-compile-options.cmake
+
