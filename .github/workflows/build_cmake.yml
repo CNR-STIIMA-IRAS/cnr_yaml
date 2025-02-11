@@ -165,7 +165,7 @@ jobs:
         endif()
   coverage:
     name: Coverage Ubuntu 24.04
-    needs: ["Ubuntu 24.04"]
+    needs: [build]
     runs-on: "Ubuntu 24.04"
     steps:
     - uses: actions/checkout@v1
