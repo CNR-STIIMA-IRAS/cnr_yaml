@@ -1,4 +1,4 @@
-name: 'PLAIN CMake CI'
+name: 'Build (plain cmake)'
 
 on:
   push:
