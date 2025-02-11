@@ -85,7 +85,7 @@ jobs:
 
         # Save the path for other steps
         file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/${cmake_dir}" cmake_dir)
-        #message("::set-output name=cmake_dir::${cmake_dir}")
+        message("::set-output name=cmake_dir::${cmake_dir}")
 
         if (NOT "${{ runner.os }}" STREQUAL "Windows")
           execute_process(
@@ -147,6 +147,8 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Bad exit status")
         endif()
+    - name: Check Path
+      run: pwd && ls
     - name: Run tests
       shell: cmake -P {0}
       run: |
