@@ -238,9 +238,6 @@ macro(cnr_cmake_package_file LIBRARY_TARGETS_LIST EXECUTABLE_TARGETS_LIST)
 
   include(CMakePackageConfigHelpers)
 
-  file(READ "${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}-compile-options.cmake"
-      COMPILE_OPTIONS_FILE_CONTENT)
-
   file(READ "${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}-dependencies.cmake"
        DEPENDENCIES_FILE_CONTENT)
     # ------------------------------------------------------------------------------
