@@ -160,6 +160,20 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Running tests failed!")
         endif()
+  coverage:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu 24.04", artifact: "Linux.tar.xz",
+            os: ubuntu-24.04,
+            build_type: "Debug", cc: "gcc", cxx: "g++", cmake_version_used: "3.16.2"
+          }
+    steps:
+    - uses: actions/checkout@v1
     - name: generate coverage
       working-directory: ./build
       run: |
