@@ -184,3 +184,74 @@ macro(cnr_configure_gtest trg deps)
   endif()
 endmacro()
 
+#
+# cnr_cmake_package_file
+#
+macro(cnr_cmake_package_file LIBRARY_TARGETS_LIST EXECUTABLE_TARGETS_LIST)
+
+  set(CONFIG_NAMESPACE "${PROJECT_NAME}::")
+  set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+  set(VERSION_CONFIG "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+  set(PROJECT_CONFIG_OUTPUT "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+  set(PROJECT_CONFIG_INPUT_TEMPLATE "cmake/${PROJECT_NAME}-config.cmake.in")
+
+  # Parameter template in the PROJECT_CONFIG_INPUT_TEMPLATE
+  list(APPEND DEPENDENCIES_INCLUDE_DIRS
+       "${CMAKE_INSTALL_PREFIX}/${CNR_PACKAGE_INCLUDE_DESTINATION}")
+
+  # Merge targets
+  foreach(_LIBRARY_TARGET ${LIBRARY_TARGETS_LIST})
+    get_target_property(target_type ${_LIBRARY_TARGET} TYPE)
+    if(target_type STREQUAL "SHARED_LIBRARY")
+      get_target_property(target_name ${_LIBRARY_TARGET} OUTPUT_NAME)
+      list(
+        APPEND
+        DEPENDENCIES_LINK_LIBRARIES
+        "${CMAKE_INSTALL_PREFIX}/${CNR_PACKAGE_LIB_DESTINATION}/${CMAKE_SHARED_LIBRARY_PREFIX}${target_name}${CMAKE_SHARED_LIBRARY_SUFFIX}"
+      )
+    elseif(target_type STREQUAL "STATIC_LIBRARY")
+      get_target_property(target_name ${_LIBRARY_TARGET} OUTPUT_NAME)
+      list(
+        APPEND
+        DEPENDENCIES_LINK_LIBRARIES
+        "${CMAKE_INSTALL_PREFIX}/${CNR_PACKAGE_LIB_DESTINATION}/${CMAKE_STATIC_LIBRARY_PREFIX}${target_name}${CMAKE_STATIC_LIBRARY_SUFFIX}"
+      )
+    endif()
+  endforeach()
+
+  foreach(_EXE_TARGET ${EXECUTABLE_TARGETS_LIST})
+    get_target_property(target_name ${_EXE_TARGET} OUTPUT_NAME)
+    list(
+      APPEND DEPENDENCIES_EXE
+      "${CMAKE_INSTALL_PREFIX}/${CNR_PACKAGE_LIB_DESTINATION}/${target_name}")
+  endforeach()
+
+  list(REMOVE_DUPLICATES DEPENDENCIES_LINK_LIBRARIES)
+  list(REMOVE_DUPLICATES DEPENDENCIES_INCLUDE_DIRS)
+  list(REMOVE_DUPLICATES DEPENDENCIES_EXE)
+
+  set(EXPORTED_TARGET_INCLUDE_DIRS "${DEPENDENCIES_INCLUDE_DIRS}")
+  set(EXPORTED_LIBRARY_TARGETS_LIST "${DEPENDENCIES_LINK_LIBRARIES}")
+  set(EXPORTED_EXECUTABLE_TARGETS_LIST "${DEPENDENCIES_EXE}")
+  set(EXPORTED_LIBRARY_TARGET_RPATH
+      "${CMAKE_INSTALL_PREFIX}/${CNR_PACKAGE_LIB_DESTINATION}")
+
+  include(CMakePackageConfigHelpers)
+
+  file(READ "${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}-dependencies.cmake"
+       DEPENDENCIES_FILE_CONTENT)
+    # ------------------------------------------------------------------------------
+  # Configure <PROJECT_NAME>ConfigVersion.cmake common to build and install tree
+  write_basic_package_version_file(
+    "${VERSION_CONFIG}"
+    VERSION ${extracted_version}
+    COMPATIBILITY SameMajorVersion)
+
+  # ------------------------------------------------------------------------------
+  # Create the ${PROJECT_NAME}Config.cmake using the template
+  # ${PROJECT_NAME}Config.cmake.in
+  configure_package_config_file(
+    "${PROJECT_CONFIG_INPUT_TEMPLATE}" "${PROJECT_CONFIG_OUTPUT}"
+    INSTALL_DESTINATION "${CNR_PACKAGE_CONFIG_DESTINATION}")
+endmacro()
+
