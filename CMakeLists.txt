@@ -22,6 +22,10 @@ cnr_set_flags()
 # ##############################################################################
 option(CMAKE_EXPORT_COMPILE_COMMANDS "Export Compile Commands (clangd need it)" ON)
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
+
+if(BUILD_UNIT_TESTS)
+  set(CMAKE_BUILD_TYPE "Debug")
+endif()
 # ##############################################################################
 # END OPTIONS                                                                 ##
 # ##############################################################################
