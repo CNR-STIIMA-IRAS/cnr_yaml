@@ -38,3 +38,7 @@ _find_package(
   program_options
   iostreams
   regex)
+
+  if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
