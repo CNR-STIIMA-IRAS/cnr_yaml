@@ -20,7 +20,7 @@ set(cnr_yaml_RPATH        "@EXPORTED_LIBRARY_TARGET_RPATH@")
 
 
 # Our library dependencies (contains definitions for IMPORTED targets)
-include("${CMAKE_INSTALL_PREFIX}/@CNR_PACKAGE_CONFIG_DESTINATION@/cnr_yamlTargets.cmake")
+include("@CMAKE_INSTALL_PREFIX@/@CNR_PACKAGE_CONFIG_DESTINATION@/cnr_yamlTargets.cmake")
 
 set_target_properties(cnr_yaml::cnr_yaml PROPERTIES
   IMPORTED_LOCATION_NOCONFIG "${cnr_yaml_RPATH}/libcnr_yaml.so"
