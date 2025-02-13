@@ -24,7 +24,7 @@ function(add_coverage_target exclude)
         add_custom_command(
             OUTPUT  ${covname}
             COMMAND ${LCOV} -c -o ${covname} -d . -b . --gcov-tool ${GCOV} --ignore-errors mismatch
-            COMMAND ${LCOV} -r ${covname} -o ${covname} ${exclude}
+            COMMAND ${LCOV} -r ${covname} ${exclude} -o ${covname} 
             COMMAND ${LCOV} -l ${covname}
             COMMAND ${GENHTML} ${covname} -output coverage
             COMMAND ${LCOV} -l ${covname} 2>/dev/null | grep Total | sed 's/|//g' | sed 's/Total://g' | awk '{print $1}' | sed s/%//g > coverage/total
