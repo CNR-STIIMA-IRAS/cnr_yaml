@@ -26,6 +26,9 @@ if(yaml-cpp VERSION_LESS "0.8")
 endif()
 
 # Boost
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
@@ -39,6 +42,3 @@ _find_package(
   iostreams
   regex)
 
-if(POLICY CMP0167)
-  cmake_policy(SET CMP0167 NEW)
-endif()
