@@ -44,7 +44,7 @@ jobs:
       if: failure()
       with:
         name: test_results_xml
-        path: ./build/Testing/**/*.xml
+        path: ./build/coverage.xml
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
