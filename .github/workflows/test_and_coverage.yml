@@ -33,9 +33,9 @@ jobs:
     - name: Run tests
       working-directory: ./build
       run: ctest .
-    - name: generate coverage
-      working-directory: ./build
-      run: make cov
+    #- name: generate coverage
+    #  working-directory: ./build
+    #  run: make cov
     # - name: Generate JSON coverage report
     #   working-directory: ./build
     #   run: gcovr -r .. . --txt-metric branch --xml > coverage.xml
