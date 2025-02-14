@@ -36,22 +36,20 @@ jobs:
     - name: generate coverage
       working-directory: ./build
       run: make cov
-    - name: Generate JSON coverage report
-      working-directory: ./build
-      run: gcovr -r .. . --txt-metric branch --xml > coverage.xml
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: test_results_xml
-        path: ./build/coverage.xml
+    # - name: Generate JSON coverage report
+    #   working-directory: ./build
+    #   run: gcovr -r .. . --txt-metric branch --xml > coverage.xml
+    # - name: Upload test results
+    #   uses: actions/upload-artifact@v4
+    #   if: failure()
+    #   with:
+    #     name: test_results_xml
+    #     path: ./build/coverage.xml
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests # optional
-        files: ./build/coverage.xml
-        disable_search: true # optional
         name: codecov-umbrella # optional
         fail_ci_if_error: false # optional (default = false)
         verbose: false # optional (default = false)
