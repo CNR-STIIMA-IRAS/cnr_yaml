@@ -1,6 +1,6 @@
 # cnr_yaml
 
-[![Build Status - Plain CMake][p]][0]
+[![Build Status][p]][0]
 [![codecov][c]][2] 
 [![Codacy Badge][y]][3]
 [![FOSSA Status][f]][4]
@@ -216,8 +216,8 @@ struct decoding_type_variant_holder<double>
 
 [![FOSSA Status][o]][5]
 
-[p]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build_cmake.yml/badge.svg
-[0]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build_cmake.yml
+[p]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build.yml/badge.svg
+[0]:https://github.com/CNR-STIIMA-IRAS/cnr_yaml/actions/workflows/build.yml
 
 [c]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_yaml/graph/badge.svg?token=fuuQUJHhaQ
 [2]:https://codecov.io/gh/CNR-STIIMA-IRAS/cnr_yaml
