@@ -77,7 +77,7 @@ set(EXECUTABLE_TARGETS_LIST "")
 if(BUILD_UNIT_TESTS)
 
   include(cmake/coverage.cmake)
-  add_coverage_target("test.cpp")
+  add_coverage_target("")
 
   add_executable(test_yaml ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
 
