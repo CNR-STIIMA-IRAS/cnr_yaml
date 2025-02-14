@@ -136,12 +136,15 @@ struct convert<Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols
                     << node;
           return false;
         }
-        if (!cnr::yaml::resize(_rhs, rows, cols))
+        if(rows != Mat::RowsAtCompileTime || cols != Mat::ColsAtCompileTime )
         {
-          std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": The input vector has dimension (" << _rhs.rows() << "x" << _rhs.cols()
-                    << ") while the param store a " << dim << "-vector, and the input vector dimensions were unchangeable. Input Node:\n"
-                    << node << std::endl;
-          return false;
+          if (!cnr::yaml::resize(_rhs, rows, cols))
+          {
+            std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": The input vector has dimension (" << _rhs.rows() << "x" << _rhs.cols()
+                      << ") while the param store a " << dim << "-vector, and the input vector dimensions were unchangeable. Input Node:\n"
+                      << node << std::endl;
+            return false;
+          }
         }
         for (int i = 0; i < static_cast<int>(vv.size()); i++)
           _rhs(i) = vv.at(static_cast<int>(i));
