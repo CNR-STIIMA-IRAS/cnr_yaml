@@ -168,12 +168,15 @@ TEST(EigeTest, EigenTest)
 
   {
     Eigen::Matrix<double, 3, 1> _ve_rhs_3;
+    Eigen::Matrix<double, 2, 1> _ve_rhs_2;
     YAML::Node v;
     bool ok = false;
     EXPECT_TRUE(does_not_throw([&] {v["val"] = YAML::convert<Eigen::Matrix<double, 3, 1>>::encode(ve_rhs_3);}));
     EXPECT_TRUE(does_not_throw([&] { ok = YAML::convert<Eigen::Matrix<double, 3, 1> >::decode(v["val"], _ve_rhs_3); }));
     EXPECT_TRUE(ok);
     EXPECT_TRUE(does_not_throw([&] { ok = YAML::convert<Eigen::Matrix<double, 3, 1> >::decode(v, _ve_rhs_3); }));
+    EXPECT_FALSE(ok);
+    EXPECT_TRUE(does_not_throw([&] { ok = YAML::convert<Eigen::Matrix<double, 2, 1> >::decode(v["val"], _ve_rhs_2); std::cout <<_ve_rhs_2.transpose()<<std::endl; }));
     EXPECT_FALSE(ok);
   }
 

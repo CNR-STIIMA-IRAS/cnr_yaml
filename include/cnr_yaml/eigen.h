@@ -128,15 +128,19 @@ struct convert<Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols
 
         int dim = static_cast<int>(vv.size());
         int rows = Mat::RowsAtCompileTime == Eigen::Dynamic ? dim : Mat::RowsAtCompileTime;
-        int cols = Mat::ColsAtCompileTime == Eigen::Dynamic && Mat::RowsAtCompileTime != Eigen::Dynamic ?
-                       dim :
-                       Mat::ColsAtCompileTime;
-
-        if (!cnr::yaml::resize(_rhs, rows, cols))
+        int cols = Mat::ColsAtCompileTime == Eigen::Dynamic ? dim : Mat::ColsAtCompileTime;
+        if( rows * cols != dim)
         {
-          std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": It was expected a Vector (" << _Rows << "x" << _Cols
+          std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": It was expected a Vector (" << rows << "x" << cols
                     << ") while the param store a " << dim << "-vector. Input Node:\n"
                     << node;
+          return false;
+        }
+        if (!cnr::yaml::resize(_rhs, rows, cols))
+        {
+          std::cerr << __PRETTY_FUNCTION__ << ":" << __LINE__ << ": The input vector has dimension (" << _rhs.rows() << "x" << _rhs.cols()
+                    << ") while the param store a " << dim << "-vector, and the input vector dimensions were unchangeable. Input Node:\n"
+                    << node << std::endl;
           return false;
         }
         for (int i = 0; i < static_cast<int>(vv.size()); i++)
