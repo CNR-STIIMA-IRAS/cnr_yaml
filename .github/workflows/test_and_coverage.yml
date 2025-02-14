@@ -50,7 +50,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests # optional
-        files: coverage.xml,./build/Testing/**/*.xml
+        files: coverage.xml
         name: codecov-umbrella # optional
         fail_ci_if_error: false # optional (default = false)
         verbose: false # optional (default = false)
