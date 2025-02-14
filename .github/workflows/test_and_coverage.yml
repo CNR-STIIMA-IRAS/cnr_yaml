@@ -26,7 +26,6 @@ jobs:
             -B build
             -D CMAKE_BUILD_TYPE=Debug
             -D BUILD_UNIT_TESTS=ON
-
     - name: Build
       run: 
         cmake --build build

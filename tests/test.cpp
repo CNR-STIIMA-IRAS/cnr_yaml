@@ -167,6 +167,41 @@ TEST(EigeTest, EigenTest)
   EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,v_lhs_2)); 
 }
 
+#include <cnr_yaml/string.h>
+
+
+TEST(YamlUtilities, StringTests)
+{
+  EXPECT_EQ(std::to_string("null"), "null");
+  EXPECT_EQ(std::to_string(YAML::NodeType::Null), "Null");
+  EXPECT_EQ(std::to_string(YAML::NodeType::Map), "Map");
+  EXPECT_EQ(std::to_string(YAML::NodeType::Scalar), "Scalar");
+  EXPECT_EQ(std::to_string(YAML::NodeType::Sequence), "Sequence");
+  EXPECT_EQ(std::to_string(YAML::NodeType::Undefined), "Undefined");
+
+  {
+    YAML::Node v;
+    v["root"] = "ciao";
+    EXPECT_EQ(std::to_string(v), "root: ciao");
+  }
+
+  {
+    std::vector<double> v{0.1,0.2,0.3};
+    EXPECT_EQ( std::to_string(v), "[ 0.100000, 0.200000, 0.300000 ]");
+  }
+
+  {
+    std::array<double,3> v{0.1,0.2,0.3};
+    EXPECT_EQ( std::to_string(v), "[ 0.100000, 0.200000, 0.300000 ]");
+  }
+
+  {
+    Eigen::Vector3d v{0.1,0.2,0.3};
+    EXPECT_EQ( std::to_string(v), "[ 0.1000, 0.2000, 0.3000 ]");
+  }
+}
+
+
 // ====================================================================================================================
 // === GLOBAL VARIABLES
 // ===============================================================================================

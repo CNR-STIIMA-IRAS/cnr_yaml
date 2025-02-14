@@ -6,8 +6,6 @@
 #include <yaml-cpp/yaml.h>
 #include <Eigen/Core>
 
-#include <cnr_yaml/type_traits.h>
-#include <cnr_yaml/eigen.h>
 #include <cnr_yaml/string.h>
 
 namespace std
@@ -42,9 +40,9 @@ template<typename T, typename A>
 inline std::string to_string(const std::vector<T, A>& v)
 {
   std::string ret = "[ ";
-  for (auto const& vi : v)
+  for (std::size_t i=0;i<v.size(); i++)
   {
-    ret +=  to_string(vi) + " ";
+    ret +=  to_string(v[i]) + (i==v.size()-1 ? " " : ", ");
   }
   return ret += "]";
 }
@@ -53,9 +51,9 @@ template<typename T, std::size_t Nm>
 inline std::string to_string(const std::array<T, Nm>& v)
 {
   std::string ret = "[ ";
-  for (auto const& vi : v)
+  for (std::size_t i=0;i<v.size(); i++)
   {
-    ret +=  to_string(vi) + " ";
+    ret +=  to_string(v[i]) + (i==v.size()-1 ? " " : ", ");
   }
   return ret += "]";
 }
@@ -63,7 +61,7 @@ inline std::string to_string(const std::array<T, Nm>& v)
 template <typename D>
 inline std::string to_string(const Eigen::MatrixBase<D>& m)
 {
-  Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+  Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[ ", " ]");
   std::stringstream ss;
   ss << std::fixed << m.transpose().format(CleanFmt);
   return ss.str();
