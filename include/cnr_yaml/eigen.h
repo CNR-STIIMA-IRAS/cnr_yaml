@@ -85,10 +85,10 @@ struct convert<Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols
       }
       else  // matrix expected
       {
-        for (int ir = 0; ir < _Rows; ir++)
+        for (int ir = 0; ir < rhs.rows(); ir++)
         {
           Node row(NodeType::Sequence);
-          for (int ic = 0; ic < _Cols; ic++)
+          for (int ic = 0; ic < rhs.cols(); ic++)
           {
             row.push_back(rhs(ir, ic));
           }

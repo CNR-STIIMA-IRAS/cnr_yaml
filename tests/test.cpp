@@ -165,6 +165,16 @@ TEST(EigeTest, EigenTest)
   EXPECT_FALSE(cnr::yaml::resize(v_lhs_1,10,10));
 
   EXPECT_TRUE(cnr::yaml::resize(v_lhs_1,v_lhs_2)); 
+
+  {
+    Eigen::Matrix<double, 3, 1> _ve_rhs_3;
+    YAML::Node v;
+    EXPECT_TRUE(does_not_throw([&] {v["val"] = YAML::convert<Eigen::Matrix<double, 3, 1>>::encode(ve_rhs_3);}));
+    bool reverse_ok = YAML::convert<Eigen::Matrix<double, 3, 1>>::decode(v["val"], _ve_rhs_3);
+    EXPECT_TRUE(reverse_ok);
+    
+  }
+
 }
 
 #include <cnr_yaml/string.h>
